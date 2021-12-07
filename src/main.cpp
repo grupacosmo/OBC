@@ -1,11 +1,18 @@
 #include <Arduino.h>
 
+#include "acc.hpp"
+
+constexpr auto baud_rate = 9600L;
+
 void setup()
 {
-    // put your setup code here, to run once:
+    Serial.begin(baud_rate);
+    Serial.println("setup");
+    accel_init();
 }
 
 void loop()
 {
-    // put your main code here, to run repeatedly:
+    auto result = accel_measurements();
+    if (result.err == 0) { print_position(result.acclr); }
 }
