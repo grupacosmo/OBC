@@ -2,6 +2,8 @@
 
 MMA8452Q accel;
 
+namespace obc {
+
 void accel_init()
 {
     Serial.println("MMA8452Q Orientation Test Code!");
@@ -17,6 +19,8 @@ void accel_init()
 
 accel_measurements_result accel_measurements()
 {
-    if (accel.available() == 0) { return {{}, -1}; }
-    return {{accel.getX(), accel.getY(), accel.getZ()}, 0};
+    if (accel.available() == 0) { return {{}, Error::Busy}; }
+    return {{accel.getX(), accel.getY(), accel.getZ()}, Error::Ok};
 }
+
+}  // namespace obc

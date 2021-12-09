@@ -8,11 +8,11 @@ void setup()
 {
     Serial.begin(baud_rate);
     Serial.println("setup");
-    accel_init();
+    obc::accel_init();
 }
 
 void loop()
 {
-    auto result = accel_measurements();
-    if (result.err == 0) { print_position(result.acclr); }
+    auto result = obc::accel_measurements();
+    if (result.err == 0) { obc::print_position(result.acclr); }
 }

@@ -5,6 +5,10 @@
 #ifndef ACCEL_HPP
 #define ACCEL_HPP
 
+#include "error.hpp"
+
+namespace obc {
+
 struct acceleration {
     short x;
     short y;
@@ -13,7 +17,7 @@ struct acceleration {
 
 struct accel_measurements_result {
     acceleration acclr;
-    int err;
+    Error err;
 };
 
 void accel_init();
@@ -27,5 +31,7 @@ inline void print_position(acceleration acclr)
     Serial.print(acclr.z);
     Serial.println();
 }
+
+}  // namespace obc
 
 #endif
