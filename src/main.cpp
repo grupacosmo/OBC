@@ -1,18 +1,19 @@
 #include <Arduino.h>
 
-#include "acc.hpp"
+#include "acceleration.hpp"
 
 constexpr auto baud_rate = 9600L;
+obc::Accelerometer acclrm;
 
 void setup()
 {
     Serial.begin(baud_rate);
     Serial.println("setup");
-    obc::accel_init();
+    obc::init(acclrm);
 }
 
 void loop()
 {
-    auto result = obc::accel_measurements();
-    if (result.err == 0) { obc::print_position(result.acclr); }
+    const auto [acclr, err] = obc::measure_acceleration(acclrm);
+    if (err == obc::Error::Ok) { obc::print_acceleration(acclr); }
 }
