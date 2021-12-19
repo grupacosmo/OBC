@@ -6,6 +6,7 @@ AlignAfterOpenBracket: AlwaysBreak
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowAllArgumentsOnNextLine: false
 AllowShortFunctionsOnASingleLine: All
+AllowShortBlocksOnASingleLine: Always
 BinPackParameters: false
 BinPackArguments: false
 AlwaysBreakAfterDefinitionReturnType: None
