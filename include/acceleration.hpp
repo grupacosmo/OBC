@@ -17,7 +17,7 @@ struct Acceleration {
 
 struct MeasureAccelerationResult {
     Acceleration acclr;
-    Error err;
+    Error acclrm_err;
 };
 
 void init(Accelerometer& acclrm);
