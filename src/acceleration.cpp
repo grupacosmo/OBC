@@ -17,13 +17,13 @@ void init(Accelerometer& acclrm)
     }
 }
 
-MeasureAccelerationResult measure_acceleration(Accelerometer& acclrm)
+MeasureAccelerationResult measure(Accelerometer& acclrm)
 {
     if (acclrm.available() == 0) { return {{}, Error::Busy}; }
     return {{acclrm.getX(), acclrm.getY(), acclrm.getZ()}, Error::Ok};
 }
 
-void print_acceleration(Acceleration acclr)
+void print(Acceleration acclr)
 {
     Serial.print(acclr.x);
     Serial.print("\t");

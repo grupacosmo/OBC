@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 namespace obc {
-void init(BMP &bmp)
+void init(Bmp &bmp)
 {
     Serial.println("Initializing BMP module");
 
@@ -13,16 +13,17 @@ void init(BMP &bmp)
             "or reboot");
         while (true) {}
     }
-    else
+    else {
         Serial.println("BMP init success!\n\n");
+    }
 
     bmp.setOversampling(4);
 }
 
-bmpMeasurements bmp_measurements(BMP &bmp)
+BmpMeasureResult measure(Bmp &bmp)
 {
     char result = bmp.startMeasurment();
-    Measurements temp = {0, 0, 0};
+    BmpMeasurements temp = {0, 0, 0};
 
     if (result == 0) { return {{}, Error::Busy}; }
 
@@ -30,12 +31,12 @@ bmpMeasurements bmp_measurements(BMP &bmp)
 
     if (result == 0) { return {{}, Error::Busy}; }
 
-    temp.altitude = bmp.altitude(temp.pressure, a_pr);
+    temp.altitude = bmp.altitude(temp.pressure, ground_lvl_pressure);
 
     return {{temp.temperature, temp.pressure, temp.altitude}, Error::Ok};
 }
 
-void print_bmp_measurements(Measurements measurements)
+void print(BmpMeasurements measurements)
 {
     Serial.print(measurements.temperature);
     Serial.print("\t");

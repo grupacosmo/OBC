@@ -1,29 +1,29 @@
 #ifndef OBC_BAROMETER_HPP
 #define OBC_BAROMETER_HPP
 
-constexpr double a_pr = 1013.25;  // ground level atmospheric pressure
-
 #include <BMP280.h>
 
 #include "error.hpp"
 
 namespace obc {
-using BMP = BMP280;
+constexpr double ground_lvl_pressure = 1013.25;
 
-struct Measurements {
+using Bmp = BMP280;
+
+struct BmpMeasurements {
     double temperature;
     double pressure;
     double altitude;
 };
 
-struct bmpMeasurements {
-    Measurements measurements;
-    Error bmp_err;
+struct BmpMeasureResult {
+    BmpMeasurements measurements;
+    Error err;
 };
 
-void init(BMP &bmp);
-bmpMeasurements bmp_measurements(BMP &bmp);
-void print_bmp_measurements(Measurements measurements);
+void init(Bmp &bmp);
+BmpMeasureResult measure(Bmp &bmp);
+void print(BmpMeasurements measurements);
 }  // namespace obc
 
 #endif
