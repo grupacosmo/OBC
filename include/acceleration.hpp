@@ -21,8 +21,8 @@ struct MeasureAccelerationResult {
 };
 
 void init(Accelerometer& acclrm);
-MeasureAccelerationResult measure_acceleration(Accelerometer& acclrm);
-void print_acceleration(Acceleration acclr);
+MeasureAccelerationResult measure(Accelerometer& acclrm);
+void print(Acceleration acclr);
 
 }  // namespace obc
 
