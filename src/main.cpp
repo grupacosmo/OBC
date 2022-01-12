@@ -12,7 +12,6 @@ obc::Gps gps(&Serial3);
 
 uint32_t timer = millis();
 
-
 void setup()
 {
     Serial.begin(baud_rate);
@@ -27,11 +26,10 @@ void loop()
     constexpr int gps_interval = 2000;
     const auto [acclr, acclr_err] = obc::measure(acclrm);
     const auto [measurements, bmp_err] = obc::measure(bmp);
-    const auto [time,date,gpsposition,err] = obc::measure_gps(gps);
+    const auto [time, date, gpsposition, err] = obc::measure_gps(gps);
     if (acclr_err == obc::Error::Ok) { obc::print(acclr); }
     if (bmp_err == obc::Error::Ok) { obc::print(measurements); }
-    if(err == obc::Error::Ok && timer - millis() > gps_interval)
-    {
+    if (err == obc::Error::Ok && timer - millis() > gps_interval) {
         obc::print(time);
         obc::print(date);
         obc::print(gpsposition);
