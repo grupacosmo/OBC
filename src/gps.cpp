@@ -1,23 +1,25 @@
 #include "gps.hpp"
 #include <Arduino.h>
 
+
 namespace obc{
 
+    constexpr auto gps_baud_rate = 9600L;
+    constexpr auto gps_delay = 1000L;
     void init(Gps& gps)
     {
-        Serial.begin(115200);
-        gps.begin(9600);
+        gps.begin(gps_baud_rate);
         gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
         gps.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate
         gps.sendCommand(PGCMD_ANTENNA);
-        delay(1000);
-        GPSSerial.println(PMTK_Q_RELEASE);
+        delay(gps_delay);
+        Serial3.println(PMTK_Q_RELEASE);
     }
     GpsMeasurments measure_gps(Gps& gps)
     {
         char c = gps.read();
             if (GPSECHO)
-              if (c) Serial.print(c);
+              if (gps.read() != 0) Serial.print(c);
           if (gps.newNMEAreceived()) {
             if (!gps.parse(gps.lastNMEA()))
             return {{},{},{},Error::Busy};

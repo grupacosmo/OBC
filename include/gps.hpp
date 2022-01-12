@@ -4,11 +4,10 @@
 #include <Adafruit_GPS.h>
 #include "error.hpp"
 
-#define GPSSerial Serial3
-#define GPSECHO false
-
 
 namespace obc {
+
+    constexpr bool GPSECHO = false;
 
     using Gps = Adafruit_GPS;
     using Gps_float = nmea_float_t;
