@@ -39,7 +39,21 @@ class Result {
 
     Result(Err<E>&& err) : err{std::move(err)}, is_ok_{false} {}
 
-    // TODO copy and move ctors and assignment operators
+    Result(const Result& other) { construct(other); }
+
+    Result(Result&& other) { construct(std::move(other)); }
+
+    Result& operator=(const Result& other)
+    {
+        assign(other);
+        return *this;
+    }
+
+    Result& operator=(Result&& other)
+    {
+        assign(std::move(other));
+        return *this;
+    }
 
     ~Result()
     {
@@ -98,8 +112,42 @@ class Result {
         if (OBC_UNLIKELY(is_ok())) { panic(); }
         return std::move(err.value);
     }
+
+   private:
+    template <typename R>
+    void construct(R&& other)
+    {
+        is_ok_ = other.is_ok_;
+        if (is_ok_) {
+            new(&ok) auto(std::forward<R>(other).ok);
+        }
+        else {
+            new(&err) auto(std::forward<R>(other).err);
+        }
+    }
+
+    template <typename R>
+    void assign(R&& other)
+    {
+        if (other.is_ok_) {
+            if (is_ok_) { ok = std::forward<R>(other).ok; }
+            else {
+                err.~Err();
+                new(&ok) auto(std::forward<R>(other).ok);
+            }
+        }
+        else {
+            if (is_ok_) {
+                ok.~Ok();
+                new(&err) auto(std::forward<R>(other).err);
+            }
+            else { err = std::forward<R>(other).err; }
+        }
+
+        is_ok_ = other.is_ok_;
+    }
 };
 
-} // namespace obbc
+} // namespace obc
 
 #endif
