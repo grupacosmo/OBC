@@ -17,7 +17,7 @@ struct BmpMeasurements {
     double altitude;
 };
 
-void init(Bmp& bmp);
+Result<Unit, Errc> init(Bmp& bmp);
 Result<BmpMeasurements, Errc> measure(Bmp& bmp);
 void print(BmpMeasurements measurements);
 }  // namespace obc

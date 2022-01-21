@@ -16,7 +16,7 @@ struct Acceleration {
     short z;
 };
 
-void init(Accelerometer& acclrm);
+Result<Unit, Errc> init(Accelerometer& acclrm);
 Result<Acceleration, Errc> measure(Accelerometer& acclrm);
 void print(Acceleration acclr);
 

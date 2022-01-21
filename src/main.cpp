@@ -17,8 +17,15 @@ void setup()
 {
     Serial.begin(baud_rate);
     Serial.println("setup");
-    obc::init(acclrm);
-    obc::init(bmp);
+
+    if (const auto result = obc::init(acclrm); result.is_err()) {
+        OBC_PANIC("accelerometer init failure");
+    }
+
+    if (const auto result = obc::init(bmp); result.is_err()) {
+        OBC_PANIC("BMP init failure");
+    }
+
     obc::init(gps);
 }
 

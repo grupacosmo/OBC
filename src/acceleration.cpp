@@ -4,14 +4,14 @@
 
 namespace obc {
 
-void init(Accelerometer& acclrm)
+Result<Unit, Errc> init(Accelerometer& acclrm)
 {
     Serial.println("MMA8452Q Orientation Test Code!");
     Wire.begin();
 
-    if (!acclrm.begin()) {
-        OBC_PANIC("accelerometer init failed");
-    }
+    if (!acclrm.begin()) { return Err{Errc::Busy}; }
+
+    return Ok{Unit{}};
 }
 
 Result<Acceleration, Errc> measure(Accelerometer& acclrm)

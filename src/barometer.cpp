@@ -3,18 +3,16 @@
 #include <Arduino.h>
 
 namespace obc {
-void init(Bmp &bmp)
+Result<Unit, Errc> init(Bmp &bmp)
 {
     Serial.println("Initializing BMP module");
 
-    if (bmp.begin() == 0) {
-        OBC_PANIC("BMP init failed");
-    }
-    else {
-        Serial.println("BMP init success!\n\n");
-    }
+    if (bmp.begin() == 0) { return Err{Errc::Busy}; }
+
+    Serial.println("BMP init success!\n\n");
 
     bmp.setOversampling(4);
+    return Ok{Unit{}};
 }
 
 Result<BmpMeasurements, Errc> measure(Bmp &bmp)
