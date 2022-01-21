@@ -8,10 +8,7 @@ void init(Bmp &bmp)
     Serial.println("Initializing BMP module");
 
     if (bmp.begin() == 0) {
-        Serial.println(
-            "BMP init failed. Please check connections "
-            "or reboot");
-        panic();
+        OBC_PANIC("BMP init failed");
     }
     else {
         Serial.println("BMP init success!\n\n");

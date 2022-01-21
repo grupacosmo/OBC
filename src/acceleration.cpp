@@ -10,10 +10,7 @@ void init(Accelerometer& acclrm)
     Wire.begin();
 
     if (!acclrm.begin()) {
-        Serial.println(
-            "Not Connected. Please check connections and read the hookup "
-            "guide.");
-        panic();
+        OBC_PANIC("accelerometer init failed");
     }
 }
 

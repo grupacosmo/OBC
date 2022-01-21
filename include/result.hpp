@@ -67,49 +67,49 @@ class Result {
 
     T& unwrap() &
     {
-        if (OBC_UNLIKELY(is_err())) { panic(); }
+        if (OBC_UNLIKELY(is_err())) { OBC_PANIC("unwrap"); }
         return ok.value;
     }
 
     const T& unwrap() const&
     {
-        if (OBC_UNLIKELY(is_err())) { panic(); }
+        if (OBC_UNLIKELY(is_err())) { OBC_PANIC("unwrap"); }
         return ok.value;
     }
 
     T&& unwrap() &&
     {
-        if (OBC_UNLIKELY(is_err())) { panic(); }
+        if (OBC_UNLIKELY(is_err())) { OBC_PANIC("unwrap"); }
         return std::move(ok.value);
     }
     
     const T&& unwrap() const&&
     {
-        if (OBC_UNLIKELY(is_err())) { panic(); }
+        if (OBC_UNLIKELY(is_err())) { OBC_PANIC("unwrap"); }
         return std::move(ok.value);
     }
 
     E& unwrap_err() &
     {
-        if (OBC_UNLIKELY(is_ok())) { panic(); }
+        if (OBC_UNLIKELY(is_ok())) { OBC_PANIC("unwrap_err"); }
         return err.value;
     }
 
     const E& unwrap_err() const&
     {
-        if (OBC_UNLIKELY(is_ok())) { panic(); }
+        if (OBC_UNLIKELY(is_ok())) { OBC_PANIC("unwrap_err"); }
         return err.value;
     }
 
     E&& unwrap_err() &&
     {
-        if (OBC_UNLIKELY(is_ok())) { panic(); }
+        if (OBC_UNLIKELY(is_ok())) { OBC_PANIC("unwrap_err"); }
         return std::move(err.value);
     }
     
     const E&& unwrap_err() const&&
     {
-        if (OBC_UNLIKELY(is_ok())) { panic(); }
+        if (OBC_UNLIKELY(is_ok())) { OBC_PANIC("unwrap_err"); }
         return std::move(err.value);
     }
 
