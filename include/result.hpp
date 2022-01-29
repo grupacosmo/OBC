@@ -37,7 +37,7 @@ Err(E) -> Err<E>;
 
 namespace detail {
 
-// compiler crashed when I tried to overload destructors
+// compiler crashed when I tried to overload destructors with 'requires'
 // so here we are with ugly tricks
 template <
     typename T,
@@ -111,18 +111,11 @@ class Result : detail::ResultBase<T, E> {
         && std::is_trivially_move_constructible_v<Err<E>>
         && std::is_trivially_destructible_v<Err<E>>;
 
-    // clang-format on
-
    public:
     Result(Ok<T>&& ok) : Base{std::move(ok)} {}
     Result(Err<E>&& err) : Base{std::move(err)} {}
 
-    // clang-format off
-
-    Result(const Result& other)
-        requires
-            is_trivial_copy_constructor
-        = default;
+    Result(const Result& other) requires is_trivial_copy_constructor = default;
 
     Result(const Result& other)
         requires
@@ -133,10 +126,7 @@ class Result : detail::ResultBase<T, E> {
         construct(other);
     }
 
-    Result(Result&& other)
-        requires
-            is_trivial_move_constructor
-        = default;
+    Result(Result&& other) requires is_trivial_move_constructor = default;
 
     Result(Result&& other)
         requires
@@ -147,9 +137,7 @@ class Result : detail::ResultBase<T, E> {
         construct(std::move(other));
     }
 
-    Result& operator=(const Result& other)
-        requires
-            is_trivial_copy_assignment
+    Result& operator=(const Result& other) requires is_trivial_copy_assignment
         = default;
 
     Result& operator=(const Result& other)
@@ -162,9 +150,7 @@ class Result : detail::ResultBase<T, E> {
         return *this;
     }
 
-    Result& operator=(Result&& other)
-        requires
-            is_trivial_move_assignment
+    Result& operator=(Result&& other) requires is_trivial_move_assignment
         = default;
 
     Result& operator=(Result&& other)
@@ -193,6 +179,32 @@ class Result : detail::ResultBase<T, E> {
     E&& unwrap_err() && { return unwrap_err_impl(std::move(*this)); }
     const E& unwrap_err() const& { return unwrap_err_impl(*this); }
     const E&& unwrap_err() const&& { return unwrap_err_impl(std::move(*this)); }
+
+    template <typename F>
+    T unwrap_or_else(F f) const&
+    {
+        return unwrap_or_else_impl(*this, f);
+    }
+    
+    template <typename F>
+    T unwrap_or_else(F f) &&
+    {
+        return unwrap_or_else_impl(std::move(*this), f);
+    }
+
+    T& expect(const char* msg) & { return expect_impl(*this, msg); }
+
+    T&& expect(const char* msg) &&
+    {
+        return expect_impl(std::move(*this), msg);
+    }
+
+    const T& expect(const char* msg) const& { return expect_impl(*this, msg); }
+
+    const T&& expect(const char* msg) const&&
+    {
+        return expect_impl(std::move(*this), msg);
+    }
 
    private:
     void destroy_ok()
@@ -254,6 +266,20 @@ class Result : detail::ResultBase<T, E> {
     {
         if (OBC_UNLIKELY(self.is_ok())) { OBC_PANIC("unwrap_err"); }
         return std::forward<Self>(self).err.value;
+    }
+
+    template <typename Self, typename F>
+    static T unwrap_or_else_impl(Self&& self, F f)
+    {
+        return self.is_ok() ? std::forward<Self>(self).unwrap()
+                            : f(std::forward<Self>(self).unwrap_err());
+    }
+
+    template <typename Self>
+    static auto&& expect_impl(Self&& self, const char* msg)
+    {
+        if (OBC_UNLIKELY(self.is_err())) { OBC_PANIC(msg); }
+        return std::forward<Self>(self).ok.value;
     }
 };
 
