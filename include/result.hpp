@@ -1,3 +1,46 @@
+/// Error handling utility.
+///
+/// 'Result<T, E>' type is used for returning and handling errors.
+/// It is a tagged union that has 2 possible variants:
+/// * 'Ok<T>' - representing success and containing a value
+/// * 'Err<E>' - representing failure and containing an error value
+///
+/// The state of a result can be checked with 'is_ok' and 'is_err' methods.
+///
+/// There are multiple methods that extract the value contained in a
+/// Result<T, E>. If the Result is Err then:
+/// * 'unwrap' - panics with generic message,
+/// * 'expect' - panics with provided message,
+/// * 'unwrap_or_else' - returns result of executing provided function.
+///
+/// 'unwrap_err' may be used to extract contained error value.
+/// 
+/// 'Unit' type can be used in place of T for functions that may fail
+///  but do not return a value.
+///
+/// # Examples
+///
+/// ```
+/// Result<int, int> make_result() {
+///     if (failure) { return Err{-1}; }
+///     return Ok{1};
+/// }
+/// ```
+///
+/// ```
+/// Result<File, ErrorKind> open_file(const char* path);
+/// Result<File, ErrorKind> create_file(const char* path);
+/// 
+/// File file = open_file(path).unwrap_or_else([&](ErrorKind kind) {
+///     switch (kind) {
+///         case ErrorKind::NotFound:
+///             return create_file(path).expect("Cannot create file");
+///         case ErrorKind::PermissionDenied:
+///             panic("Permission denied");
+///     }
+/// });
+/// ```
+
 #ifndef OBC_RESULT_HPP
 #define OBC_RESULT_HPP
 
@@ -185,7 +228,7 @@ class Result : detail::ResultBase<T, E> {
     {
         return unwrap_or_else_impl(*this, f);
     }
-    
+
     template <typename F>
     T unwrap_or_else(F f) &&
     {
@@ -257,28 +300,28 @@ class Result : detail::ResultBase<T, E> {
     template <typename Self>
     static auto&& unwrap_impl(Self&& self)
     {
-        if (OBC_UNLIKELY(self.is_err())) { OBC_PANIC("unwrap"); }
+        if (OBC_UNLIKELY(self.is_err())) { panic("unwrap"); }
         return std::forward<Self>(self).ok.value;
     }
 
     template <typename Self>
     static auto&& unwrap_err_impl(Self&& self)
     {
-        if (OBC_UNLIKELY(self.is_ok())) { OBC_PANIC("unwrap_err"); }
+        if (OBC_UNLIKELY(self.is_ok())) { panic("unwrap_err"); }
         return std::forward<Self>(self).err.value;
     }
 
     template <typename Self, typename F>
     static T unwrap_or_else_impl(Self&& self, F f)
     {
-        return self.is_ok() ? std::forward<Self>(self).unwrap()
-                            : f(std::forward<Self>(self).unwrap_err());
+        return self.is_ok() ? std::forward<Self>(self).ok.value
+                            : f(std::forward<Self>(self).err.value);
     }
 
     template <typename Self>
     static auto&& expect_impl(Self&& self, const char* msg)
     {
-        if (OBC_UNLIKELY(self.is_err())) { OBC_PANIC(msg); }
+        if (OBC_UNLIKELY(self.is_err())) { panic(msg); }
         return std::forward<Self>(self).ok.value;
     }
 };

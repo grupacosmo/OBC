@@ -3,20 +3,13 @@
 
 #include <Arduino.h>
 
+#include "source_location.hpp"
+
 namespace obc {
 
 enum class Errc { Busy };
 
-#define OBC_PANIC(msg) \
-    Serial.print(R"(program panicked at ")"); \
-    Serial.print(msg); \
-    Serial.print(R"(", )"); \
-    Serial.print(__FILE__); \
-    Serial.print(":"); \
-    Serial.print(__LINE__); \
-    Serial.print("\n"); \
-    Serial.flush(); \
-    while (true) {}
+void panic(const char* msg, SourceLocation loc = SourceLocation::current());
 
 }  // namespace obc
 
