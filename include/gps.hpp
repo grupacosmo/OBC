@@ -9,12 +9,23 @@
 
 namespace obc {
 
-constexpr bool GPSECHO = false;
-constexpr std::array<int, 3> format_helper = {10, 9, 100};
+template <typename T>  // requires std::unsigned_integral<T>
+bool has_tens_digit(T n)
+{
+    return n > 9;
+}
+
+template <typename T>  // requires std::unsigned_integral<T>
+bool has_hundreds_digit(T n)
+{
+    return n > 99;
+}
+
+constexpr bool gpsecho = false;
 constexpr double velocity_conversion = 1.85166;
 
 using Gps = Adafruit_GPS;
-using Gps_float = nmea_float_t;
+using GpsFloat = nmea_float_t;
 
 struct GpsTime {
     uint8_t hour;
@@ -32,12 +43,12 @@ struct GpsDate {
 struct GpsPosition {
     bool fix;
     uint8_t fixquality;
-    Gps_float longitude;
+    GpsFloat longitude;
     char lon;
-    Gps_float latitude;
+    GpsFloat latitude;
     char lat;
-    Gps_float altitude;
-    Gps_float speed;
+    GpsFloat altitude;
+    GpsFloat speed;
     uint8_t satelites;
 };
 
@@ -45,14 +56,16 @@ struct GpsMeasurments {
     GpsTime time;
     GpsDate date;
     GpsPosition gpsposition;
+};
+
+struct MeasureGpsResult {
+    GpsMeasurments gpsmeasurments;
     Error err;
 };
 
 void init(Gps& gps);
-GpsMeasurments measure_gps(Gps& gps);
-void print(const GpsTime& gps_time);
-void print(const GpsDate& gps_date);
-void print(const GpsPosition& gps_position);
+MeasureGpsResult measure_gps(Gps& gps);
+void print(GpsMeasurments gps_measurments);
 }  // namespace obc
 
 #endif

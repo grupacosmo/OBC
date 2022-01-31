@@ -5,6 +5,7 @@
 #include "gps.hpp"
 
 constexpr auto baud_rate = 9600L;
+constexpr int interval = 2000;
 HardwareSerial Serial3(PC11, PC10);
 obc::Accelerometer acclrm;
 obc::Bmp bmp;
@@ -23,16 +24,13 @@ void setup()
 
 void loop()
 {
-    constexpr int gps_interval = 2000;
-    const auto [acclr, acclr_err] = obc::measure(acclrm);
-    const auto [measurements, bmp_err] = obc::measure(bmp);
-    const auto [time, date, gpsposition, err] = obc::measure_gps(gps);
-    if (acclr_err == obc::Error::Ok) { obc::print(acclr); }
-    if (bmp_err == obc::Error::Ok) { obc::print(measurements); }
-    if (err == obc::Error::Ok && timer - millis() > gps_interval) {
-        obc::print(time);
-        obc::print(date);
-        obc::print(gpsposition);
+    const auto [gpsmeasurments, err] = obc::measure_gps(gps);
+    if (timer - millis() > interval) {
+        const auto [acclr, acclr_err] = obc::measure(acclrm);
+        const auto [measurements, bmp_err] = obc::measure(bmp);
+        if (acclr_err == obc::Error::Ok) { obc::print(acclr); }
+        if (bmp_err == obc::Error::Ok) { obc::print(measurements); }
+        if (err == obc::Error::Ok) { obc::print(gpsmeasurments); }
         timer = millis();
     }
 }
