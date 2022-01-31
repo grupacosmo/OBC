@@ -14,7 +14,7 @@
 /// * 'unwrap_or_else' - returns result of executing provided function.
 ///
 /// 'unwrap_err' may be used to extract contained error value.
-/// 
+///
 /// 'Unit' type can be used in place of T for functions that may fail
 ///  but do not return a value.
 ///
@@ -30,7 +30,7 @@
 /// ```
 /// Result<File, ErrorKind> open_file(const char* path);
 /// Result<File, ErrorKind> create_file(const char* path);
-/// 
+///
 /// File file = open_file(path).unwrap_or_else([&](ErrorKind kind) {
 ///     switch (kind) {
 ///         case ErrorKind::NotFound:
@@ -125,7 +125,7 @@ struct ResultBase<T, E, false> {
 }  // namespace detail
 
 template <typename T, typename E>
-class Result : detail::ResultBase<T, E> {
+class [[nodiscard]] Result : detail::ResultBase<T, E> {
     using Base = detail::ResultBase<T, E>;
 
     // clang-format off

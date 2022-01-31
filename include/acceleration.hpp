@@ -3,8 +3,8 @@
 
 #include <SparkFun_MMA8452Q.h>
 
-#include "result.hpp"
 #include "error.hpp"
+#include "result.hpp"
 
 namespace obc {
 

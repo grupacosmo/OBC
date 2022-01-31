@@ -3,8 +3,8 @@
 
 #include <BMP280.h>
 
-#include "result.hpp"
 #include "error.hpp"
+#include "result.hpp"
 
 namespace obc {
 constexpr double ground_lvl_pressure = 1013.25;
