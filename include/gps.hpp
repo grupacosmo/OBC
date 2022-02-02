@@ -6,6 +6,7 @@
 #include <array>
 
 #include "error.hpp"
+#include "result.hpp"
 
 namespace obc {
 
@@ -58,13 +59,8 @@ struct GpsMeasurments {
     GpsPosition gpsposition;
 };
 
-struct MeasureGpsResult {
-    GpsMeasurments gpsmeasurments;
-    Error err;
-};
-
 void init(Gps& gps);
-MeasureGpsResult measure_gps(Gps& gps);
+Result<GpsMeasurments, Errc> measure_gps(Gps& gps);
 void print(GpsMeasurments gps_measurments);
 }  // namespace obc
 
