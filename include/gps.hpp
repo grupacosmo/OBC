@@ -59,7 +59,7 @@ struct GpsMeasurments {
     GpsPosition gpsposition;
 };
 
-void init(Gps& gps);
+Result<Unit, Errc> init(Gps& gps);
 Result<GpsMeasurments, Errc> measure_gps(Gps& gps);
 void print(GpsMeasurments gps_measurments);
 }  // namespace obc

@@ -5,13 +5,14 @@
 namespace obc {
 
 constexpr auto gps_baud_rate = 9600L;
-void init(Gps& gps)
+Result<Unit, Errc> init(Gps& gps)
 {
-    gps.begin(gps_baud_rate);
+    if (!gps.begin(gps_baud_rate)) { return Err{Errc::Busy}; }
     gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
     gps.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
     gps.sendCommand(PGCMD_ANTENNA);
     Serial3.println(PMTK_Q_RELEASE);
+    return Ok{Unit{}};
 }
 Result<GpsMeasurments, Errc> measure_gps(Gps& gps)
 {

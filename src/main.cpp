@@ -19,7 +19,7 @@ void setup()
     Serial.println("setup");
     obc::init(acclrm).expect("accelerometer init failure");
     obc::init(bmp).expect("BMP init failure");
-    obc::init(gps);
+    obc::init(gps).expect("GPS init failure");
 }
 
 void loop()
