@@ -24,13 +24,13 @@ void setup()
 
 void loop()
 {
-    const auto [gpsmeasurments, err] = obc::measure_gps(gps);
     if (timer - millis() > interval) {
-        const auto [acclr, acclr_err] = obc::measure(acclrm);
-        const auto [measurements, bmp_err] = obc::measure(bmp);
-        if (acclr_err == obc::Error::Ok) { obc::print(acclr); }
-        if (bmp_err == obc::Error::Ok) { obc::print(measurements); }
-        if (err == obc::Error::Ok) { obc::print(gpsmeasurments); }
+        const auto acclr = obc::measure(acclrm);
+        const auto bmp_measurements = obc::measure(bmp);
+        const auto gps_measurments = obc::measure_gps(gps);
+        if (acclr.is_ok()) { obc::print(acclr.unwrap()); }
+        if (bmp_measurements.is_ok()) { obc::print(bmp_measurements.unwrap()); }
+        if (gps_measurments.is_ok()) { obc::print(gps_measurments.unwrap()); }
         timer = millis();
     }
 }

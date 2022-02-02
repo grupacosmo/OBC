@@ -13,27 +13,25 @@ void init(Gps& gps)
     gps.sendCommand(PGCMD_ANTENNA);
     Serial3.println(PMTK_Q_RELEASE);
 }
-MeasureGpsResult measure_gps(Gps& gps)
+Result<GpsMeasurments, Errc> measure_gps(Gps& gps)
 {
     char c = gps.read();
-    if (gpsecho)
-        if (gps.read() != 0) Serial.print(c);
-    if (gps.newNMEAreceived()) {
-        if (!gps.parse(gps.lastNMEA())) return {{}, Error::Busy};
+    if (gpsecho && gps.read() != 0) Serial.print(c);
+    if (gps.newNMEAreceived() && !gps.parse(gps.lastNMEA())) {
+        return Err{Errc::Busy};
     }
-    return {
-        {{gps.hour, gps.minute, gps.seconds, gps.milliseconds},
-         {gps.year, gps.month, gps.day},
-         {gps.fix,
-          gps.fixquality,
-          gps.longitudeDegrees,
-          gps.lon,
-          gps.latitudeDegrees,
-          gps.lat,
-          gps.altitude,
-          gps.speed,
-          gps.satellites}},
-        Error::Ok};
+    return Ok{GpsMeasurments{
+        {gps.hour, gps.minute, gps.seconds, gps.milliseconds},
+        {gps.year, gps.month, gps.day},
+        {gps.fix,
+         gps.fixquality,
+         gps.longitudeDegrees,
+         gps.lon,
+         gps.latitudeDegrees,
+         gps.lat,
+         gps.altitude,
+         gps.speed,
+         gps.satellites}}};
 }
 void print(GpsMeasurments gps_measurments)
 {

@@ -3,6 +3,7 @@
 
 #include <BMP280.h>
 
+#include "result.hpp"
 #include "error.hpp"
 
 namespace obc {
@@ -16,13 +17,8 @@ struct BmpMeasurements {
     double altitude;
 };
 
-struct BmpMeasureResult {
-    BmpMeasurements measurements;
-    Error err;
-};
-
-void init(Bmp &bmp);
-BmpMeasureResult measure(Bmp &bmp);
+void init(Bmp& bmp);
+Result<BmpMeasurements, Errc> measure(Bmp& bmp);
 void print(BmpMeasurements measurements);
 }  // namespace obc
 

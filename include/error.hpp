@@ -3,7 +3,9 @@
 
 namespace obc {
 
-enum class Error { Ok, Busy };
+enum class Errc { Busy };
+
+inline void panic() { while (true) {} }
 
 }  // namespace obc
 
