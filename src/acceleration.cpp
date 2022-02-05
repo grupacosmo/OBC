@@ -4,20 +4,20 @@
 
 namespace obc {
 
-Result<Unit, Errc> init(Accelerometer& acclrm)
+Result<Unit, Errc> init(MMA8452Q& accelerometer)
 {
-    Serial.println("MMA8452Q Orientation Test Code!");
     Wire.begin();
-
-    if (!acclrm.begin()) { return Err{Errc::Busy}; }
-
+    if (!accelerometer.begin()) { return Err{Errc::Busy}; }
     return Ok{Unit{}};
 }
 
-Result<Acceleration, Errc> measure(Accelerometer& acclrm)
+Result<Acceleration, Errc> measure(MMA8452Q& accelerometer)
 {
-    if (acclrm.available() == 0) { return Err{Errc::Busy}; }
-    return Ok{Acceleration{acclrm.getX(), acclrm.getY(), acclrm.getZ()}};
+    if (accelerometer.available() == 0) { return Err{Errc::Busy}; }
+    return Ok{Acceleration{
+        accelerometer.getX(),
+        accelerometer.getY(),
+        accelerometer.getZ()}};
 }
 
 void print(Acceleration acclr)

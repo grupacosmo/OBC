@@ -24,12 +24,12 @@
 namespace obc {
 
 class SourceLocation {
-    const char* file_;
-    const char* function_;
-    int line_;
+    const char* file_ = "unknown";
+    const char* function_ = file_;
+    int line_ = 0;
 
    public:
-    constexpr SourceLocation() : file_{"unknown"}, function_{file_}, line_{0} {}
+    constexpr SourceLocation() = default;
 
     static constexpr SourceLocation current(
         const char* file = __builtin_FILE(),

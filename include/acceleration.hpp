@@ -8,16 +8,14 @@
 
 namespace obc {
 
-using Accelerometer = MMA8452Q;
-
 struct Acceleration {
     short x;
     short y;
     short z;
 };
 
-Result<Unit, Errc> init(Accelerometer& acclrm);
-Result<Acceleration, Errc> measure(Accelerometer& acclrm);
+Result<Unit, Errc> init(MMA8452Q& accelerometer);
+Result<Acceleration, Errc> measure(MMA8452Q& accelerometer);
 void print(Acceleration acclr);
 
 }  // namespace obc

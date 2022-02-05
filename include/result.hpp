@@ -94,8 +94,17 @@ struct ResultBase {
     };
     bool is_ok_;
 
+    // NOLINTNEXTLINE(hicpp-explicit-conversions)
     ResultBase(Ok<T>&& ok) : ok{std::move(ok)}, is_ok_{true} {}
+
+    // NOLINTNEXTLINE(hicpp-explicit-conversions)
     ResultBase(Err<E>&& err) : err{std::move(err)}, is_ok_{false} {}
+
+    ResultBase(const ResultBase&) = default;
+    ResultBase& operator=(const ResultBase&) = default;
+
+    ResultBase(ResultBase&&) noexcept = default;
+    ResultBase& operator=(ResultBase&&) noexcept = default;
 
     ~ResultBase() = default;
 };
@@ -108,15 +117,26 @@ struct ResultBase<T, E, false> {
     };
     bool is_ok_;
 
+    // NOLINTNEXTLINE(hicpp-explicit-conversions)
     ResultBase(Ok<T>&& ok) : ok{std::move(ok)}, is_ok_{true} {}
+
+    // NOLINTNEXTLINE(hicpp-explicit-conversions)
     ResultBase(Err<E>&& err) : err{std::move(err)}, is_ok_{false} {}
+
+    ResultBase(const ResultBase&) = delete;
+    ResultBase& operator=(const ResultBase&) = delete;
+
+    ResultBase(ResultBase&&) noexcept = delete;
+    ResultBase& operator=(ResultBase&&) noexcept = delete;
 
     ~ResultBase()
     {
         if (is_ok_) {
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
             if constexpr (!std::is_trivially_destructible_v<T>) { ok.~Ok(); }
         }
         else {
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
             if constexpr (!std::is_trivially_destructible_v<E>) { err.~Err(); }
         }
     }
@@ -125,6 +145,7 @@ struct ResultBase<T, E, false> {
 }  // namespace detail
 
 template <typename T, typename E>
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class [[nodiscard]] Result : detail::ResultBase<T, E> {
     using Base = detail::ResultBase<T, E>;
 
@@ -155,7 +176,10 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
         && std::is_trivially_destructible_v<Err<E>>;
 
    public:
+    // NOLINTNEXTLINE(hicpp-explicit-conversions)
     Result(Ok<T>&& ok) : Base{std::move(ok)} {}
+
+    // NOLINTNEXTLINE(hicpp-explicit-conversions)
     Result(Err<E>&& err) : Base{std::move(err)} {}
 
     Result(const Result& other) requires is_trivial_copy_constructor = default;
@@ -169,9 +193,10 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
         construct(other);
     }
 
-    Result(Result&& other) requires is_trivial_move_constructor = default;
+    Result(Result&& other) noexcept requires is_trivial_move_constructor
+        = default;
 
-    Result(Result&& other)
+    Result(Result&& other) noexcept
         requires
             !is_trivial_move_constructor
             && std::is_move_constructible_v<Ok<T>>
@@ -180,8 +205,8 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
         construct(std::move(other));
     }
 
-    Result& operator=(const Result& other) requires is_trivial_copy_assignment
-        = default;
+    Result& operator=(const Result& other)
+        requires is_trivial_copy_assignment = default;
 
     Result& operator=(const Result& other)
         requires
@@ -193,10 +218,10 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
         return *this;
     }
 
-    Result& operator=(Result&& other) requires is_trivial_move_assignment
-        = default;
+    Result& operator=(Result&& other) noexcept
+        requires is_trivial_move_assignment = default;
 
-    Result& operator=(Result&& other)
+    Result& operator=(Result&& other) noexcept
         requires
             !is_trivial_move_assignment
             && std::is_move_assignable_v<Ok<T>>

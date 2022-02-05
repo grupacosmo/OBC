@@ -7,9 +7,6 @@
 #include "result.hpp"
 
 namespace obc {
-constexpr double ground_lvl_pressure = 1013.25;
-
-using Bmp = BMP280;
 
 struct BmpMeasurements {
     double temperature;
@@ -17,9 +14,10 @@ struct BmpMeasurements {
     double altitude;
 };
 
-Result<Unit, Errc> init(Bmp& bmp);
-Result<BmpMeasurements, Errc> measure(Bmp& bmp);
+Result<Unit, Errc> init(BMP280& bmp);
+Result<BmpMeasurements, Errc> measure(BMP280& bmp);
 void print(BmpMeasurements measurements);
+
 }  // namespace obc
 
 #endif
