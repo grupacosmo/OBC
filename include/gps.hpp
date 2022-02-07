@@ -10,24 +10,6 @@
 
 namespace obc {
 
-template <typename T>  // requires std::unsigned_integral<T>
-bool has_tens_digit(T n)
-{
-    return n > 9;
-}
-
-template <typename T>  // requires std::unsigned_integral<T>
-bool has_hundreds_digit(T n)
-{
-    return n > 99;
-}
-
-constexpr bool gpsecho = false;
-constexpr double velocity_conversion = 1.85166;
-
-using Gps = Adafruit_GPS;
-using GpsFloat = nmea_float_t;
-
 struct GpsTime {
     uint8_t hour;
     uint8_t minute;
@@ -44,24 +26,25 @@ struct GpsDate {
 struct GpsPosition {
     bool fix;
     uint8_t fixquality;
-    GpsFloat longitude;
+    nmea_float_t longitude;
     char lon;
-    GpsFloat latitude;
+    nmea_float_t latitude;
     char lat;
-    GpsFloat altitude;
-    GpsFloat speed;
+    nmea_float_t altitude;
+    nmea_float_t speed;
     uint8_t satelites;
 };
 
-struct GpsMeasurments {
+struct GpsMeasurements {
     GpsTime time;
     GpsDate date;
-    GpsPosition gpsposition;
+    GpsPosition position;
 };
 
-Result<Unit, Errc> init(Gps& gps);
-Result<GpsMeasurments, Errc> measure_gps(Gps& gps);
-void print(GpsMeasurments gps_measurments);
+Result<Unit, Errc> init(Adafruit_GPS& gps);
+Result<GpsMeasurements, Errc> measure(Adafruit_GPS& gps);
+void print(GpsMeasurements measurements);
+
 }  // namespace obc
 
 #endif
