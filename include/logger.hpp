@@ -8,11 +8,10 @@
 #include "acceleration.hpp"
 #include "barometer.hpp"
 #include "error.hpp"
-// place for GPS header file
+#include "gps.hpp"
 
 namespace obc {
 constexpr uint8_t cs = 4;
-unsigned int flight_id = 1;
 
 struct Packet {
     Acceleration acclr;
@@ -20,9 +19,10 @@ struct Packet {
     // place for GPS String log
 };
 
-Result<Unit, Errc> init();
+Result<Unit, Errc> init(File &);
 String serialize(Packet &);
-void sd_dump(File &, String &);
+void write_file(const char *, const String &);
+void write_file(const char *, const char *);
 }  // namespace obc
 
 #endif

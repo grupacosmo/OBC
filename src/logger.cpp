@@ -2,40 +2,20 @@
 
 #include <Arduino.h>
 
-namespace obc {
 extern String flight_path_folder;
+extern File file;
 
-Result<Unit, Errc> init()
+namespace obc {
+
+Result<Unit, Errc> init(File &boot)
 {
     if (!SD.begin()) { return Err{Errc::Busy}; }
 
+    boot = SD.open((flight_path_folder + "/boot.txt"), O_WRITE);
+    boot.println("SD not initialized.");
+    boot.close();
+
     return Ok{Unit{}};
-}
-
-String log(BmpMeasurements measurements)
-{
-    String temp;
-    temp += measurements.temperature;
-    temp += "\t";
-    temp += measurements.pressure;
-    temp += "\t";
-    temp += measurements.altitude;
-    temp += "\t";
-
-    return temp;
-}
-
-String log(Acceleration acclr)
-{
-    String temp;
-    temp += acclr.x;
-    temp += "\t";
-    temp += acclr.y;
-    temp += "\t";
-    temp += acclr.z;
-    temp += "\t";
-
-    return temp;
 }
 
 String serialize(Packet &data)
@@ -59,11 +39,18 @@ String serialize(Packet &data)
     return logs;
 }
 
-void sd_dump(File &telemetry, String &logs)
+void write_file(const char *file_name, const String &data)
 {
-    telemetry = SD.open("telemetry.txt", O_WRITE);
-    telemetry.println(logs);
-    telemetry.close();
+    file = SD.open(flight_path_folder + file_name, O_WRITE);
+    file.println(data);
+    file.close();
+}
+
+void write_file(const char *file_name, const char *data)
+{
+    file = SD.open(flight_path_folder + file_name, O_WRITE);
+    file.println(data);
+    file.close();
 }
 
 }  // namespace obc
