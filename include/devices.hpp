@@ -11,7 +11,9 @@
 #include "utils.hpp"
 
 namespace obc {
+
 void init();
+
 }
 
 #endif

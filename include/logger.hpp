@@ -7,21 +7,24 @@
 
 #include "acceleration.hpp"
 #include "barometer.hpp"
+#include "digits.hpp"
 #include "error.hpp"
 #include "gps.hpp"
 
 namespace obc {
 
 struct Packet {
-    Acceleration acclr;
-    BmpMeasurements measurements;
-    // place for GPS String log
+    Acceleration acclr_measurements;
+    BmpMeasurements bmp_measurements;
+    GpsMeasurements gps_measurements;
 };
 
 Result<Unit, Errc> init(File &);
-String serialize(Packet &);
+String serialize(const Packet &);
 void file_appendln(const char *, const String &);
 void file_appendln(const char *, const char *);
+void date_append(const GpsDate &date);
+
 }  // namespace obc
 
 #endif

@@ -8,6 +8,7 @@
 
 constexpr auto baud_rate = 9600l;
 constexpr int interval = 2000;
+bool date_append = false;
 
 String flight_path_folder;
 
@@ -31,12 +32,25 @@ void setup()
 void loop()
 {
     if (timer - millis() > interval) {
+        obc::Packet logs = {{}, {}, {}};
         const auto acclr = obc::measure(accelerometer);
         const auto bmp_measurements = obc::measure(bmp);
         const auto gps_measurments = obc::measure(gps);
-        if (acclr.is_ok()) { obc::print(acclr.unwrap()); }
-        if (bmp_measurements.is_ok()) { obc::print(bmp_measurements.unwrap()); }
-        if (gps_measurments.is_ok()) { obc::print(gps_measurments.unwrap()); }
+        if (acclr.is_ok()) { logs.acclr_measurements = acclr.unwrap(); }
+        if (bmp_measurements.is_ok()) {
+            logs.bmp_measurements = bmp_measurements.unwrap();
+        }
+        if (gps_measurments.is_ok()) {
+            logs.gps_measurements = gps_measurments.unwrap();
+        }
+
+        obc::file_appendln("/logs.csv", obc::serialize(logs));
+
+        if (!date_append) {
+            obc::date_append(logs.gps_measurements.date);
+            date_append = true;
+        }
+
         timer = millis();
     }
 }

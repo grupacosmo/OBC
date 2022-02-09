@@ -8,6 +8,7 @@ extern BMP280 bmp;
 extern Adafruit_GPS gps;
 
 namespace obc {
+
 void init()
 {
     init(file).expect("SD init failure");
@@ -36,4 +37,5 @@ void init()
 
     obc::file_appendln("/boot.txt", "Devices initialized without problems.");
 }
+
 }  // namespace obc

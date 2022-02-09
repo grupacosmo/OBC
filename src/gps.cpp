@@ -7,7 +7,6 @@ namespace obc {
 namespace {
 
 constexpr auto baud_rate = 9600l;
-constexpr nmea_float_t velocity_conversion = 1.85166f;
 
 }  // namespace
 
@@ -41,22 +40,6 @@ Result<GpsMeasurements, Errc> measure(Adafruit_GPS& gps)
          gps.speed,
          gps.satellites}}};
 }
-
-namespace {
-
-template <typename T>  // requires std::unsigned_integral<T>
-constexpr bool has_tens_digit(T n)
-{
-    return n > 9;
-}
-
-template <typename T>  // requires std::unsigned_integral<T>
-constexpr bool has_hundreds_digit(T n)
-{
-    return n > 99;
-}
-
-}  // namespace
 
 void print(GpsTime time)
 {

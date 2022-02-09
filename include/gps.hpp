@@ -3,10 +3,11 @@
 
 #include <Adafruit_GPS.h>
 
-#include <array>
-
+#include "digits.hpp"
 #include "error.hpp"
 #include "result.hpp"
+
+constexpr nmea_float_t velocity_conversion = 1.85166f;
 
 namespace obc {
 

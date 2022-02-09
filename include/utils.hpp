@@ -1,3 +1,6 @@
+#ifndef OBC_UTILS_HPP
+#define OBC_UTILS_HPP
+
 #include <type_traits>
 
 namespace obc {
@@ -9,3 +12,5 @@ constexpr auto to_underlying(Enum e)
 }
 
 }  // namespace obc
+
+#endif
