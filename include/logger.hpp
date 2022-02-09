@@ -11,7 +11,6 @@
 #include "gps.hpp"
 
 namespace obc {
-constexpr uint8_t cs = 4;
 
 struct Packet {
     Acceleration acclr;
@@ -21,8 +20,8 @@ struct Packet {
 
 Result<Unit, Errc> init(File &);
 String serialize(Packet &);
-void write_file(const char *, const String &);
-void write_file(const char *, const char *);
+void file_appendln(const char *, const String &);
+void file_appendln(const char *, const char *);
 }  // namespace obc
 
 #endif
