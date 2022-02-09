@@ -32,24 +32,25 @@ void setup()
 void loop()
 {
     if (timer - millis() > interval) {
-        obc::Packet logs = {{}, {}, {}};
+        obc::Packet logs = {{}, {}, {}, {}, {}};
         const auto acclr = obc::measure(accelerometer);
         const auto bmp_measurements = obc::measure(bmp);
-        const auto gps_measurments = obc::measure(gps);
+        logs.time = obc::read_time(gps);
+        logs.position = obc::read_position(gps);
+
         if (acclr.is_ok()) { logs.acclr_measurements = acclr.unwrap(); }
         if (bmp_measurements.is_ok()) {
             logs.bmp_measurements = bmp_measurements.unwrap();
         }
-        if (gps_measurments.is_ok()) {
-            logs.gps_measurements = gps_measurments.unwrap();
+
+        if (!date_append) {
+            date_append = true;
+            obc::file_appendln(
+                "/logs.csv",
+                obc::serialize(obc::read_date(gps)));
         }
 
         obc::file_appendln("/logs.csv", obc::serialize(logs));
-
-        if (!date_append) {
-            obc::date_append(logs.gps_measurements.date);
-            date_append = true;
-        }
 
         timer = millis();
     }

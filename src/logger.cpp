@@ -11,13 +11,11 @@ unsigned int flight_id = 1;
 
 namespace obc {
 
-Result<Unit, Errc> init(File& boot)
+Result<Unit, Errc> sd_init()
 {
     if (!SD.begin(chip_select)) { return Err{Errc::Busy}; }
 
-    boot = SD.open((flight_path_folder + "/boot.txt"), O_WRITE);
-    boot.println("SD not initialized.");
-    boot.close();
+    file_appendln("/boot.txt", "SD card initialized properly.");
 
     while (SD.exists("/FLIGHT_" + String(flight_id))) { flight_id++; }
     flight_path_folder = "/FLIGHT_" + String(flight_id);
@@ -29,88 +27,90 @@ Result<Unit, Errc> init(File& boot)
     return Ok{Unit{}};
 }
 
-void serialize_into(String& buf, const GpsMeasurements& measurements)
+void serialize_into(String& buf, const GpsTime& data)
 {
-    if (!has_tens_digit(measurements.time.hour)) { buf += '0'; }
-    buf += measurements.time.hour;
+    if (!has_tens_digit(data.hour)) { buf += '0'; }
+    buf += data.hour;
     buf += ':';
-    if (!has_tens_digit(measurements.time.minute)) { buf += '0'; }
-    buf += measurements.time.minute;
+    if (!has_tens_digit(data.minute)) { buf += '0'; }
+    buf += data.minute;
     buf += ':';
-    if (!has_tens_digit(measurements.time.seconds)) { buf += '0'; }
-    buf += measurements.time.seconds;
+    if (!has_tens_digit(data.seconds)) { buf += '0'; }
+    buf += data.seconds;
     buf += ':';
-    if (!has_hundreds_digit(measurements.time.milliseconds)) {
-        if (!has_tens_digit(measurements.time.milliseconds)) { buf += "00"; }
+    if (!has_hundreds_digit(data.milliseconds)) {
+        if (!has_tens_digit(data.milliseconds)) { buf += "00"; }
         else {
             buf += '0';
         }
     }
-    buf += measurements.time.milliseconds;
+    buf += data.milliseconds;
     buf += "\t";
+}
+
+void serialize_into(String& buf, const GpsPosition& data)
+{
     buf += "Fix: ";
-    buf += static_cast<int>(measurements.position.fix);
+    buf += static_cast<int>(data.fix);
     buf += " quality: ";
-    buf += static_cast<int>(measurements.position.fixquality);
+    buf += static_cast<int>(data.fixquality);
     buf += "\t";
-    if (measurements.position.fix) {
+    if (data.fix) {
         buf += "Location: ";
-        buf += String(measurements.position.latitude, 4);
-        buf += measurements.position.lat;
+        buf += String(data.latitude, 4);
+        buf += data.lat;
         buf += ", ";
-        buf += String(measurements.position.longitude, 4);
-        buf += measurements.position.lon;
+        buf += String(data.longitude, 4);
+        buf += data.lon;
         buf += "\t";
         buf += "Speed (km/h): ";
-        buf += measurements.position.speed / velocity_conversion;
+        buf += data.speed / velocity_conversion;
         buf += "\t";
         buf += "Altitude: ";
-        buf += measurements.position.altitude;
+        buf += data.altitude;
         buf += "\t";
         buf += "Satellites: ";
-        buf += static_cast<int>(measurements.position.satelites);
+        buf += static_cast<int>(data.satelites);
     }
 }
 
-void serialize_into(String& buf, const BmpMeasurements& measurements)
+void serialize_into(String& buf, const GpsDate& data)
 {
-    buf += measurements.temperature;
+    buf += "Date: ";
+    buf += data.day;
+    buf += '/';
+    buf += data.month;
+    buf += "/20";
+    if (!has_tens_digit(data.year)) { buf += '0'; }
+    buf += data.year;
+}
+
+void serialize_into(String& buf, const BmpMeasurements& data)
+{
+    buf += data.temperature;
     buf += "\t";
-    buf += measurements.pressure;
+    buf += data.pressure;
     buf += "\t";
-    buf += measurements.altitude;
+    buf += data.altitude;
     buf += "\t";
 }
 
-void serialize_into(String& buf, const Acceleration& measurements)
+void serialize_into(String& buf, const Acceleration& data)
 {
-    buf += measurements.x;
+    buf += data.x;
     buf += "\t";
-    buf += measurements.y;
+    buf += data.y;
     buf += "\t";
-    buf += measurements.z;
+    buf += data.z;
     buf += "\t";
 }
 
 void serialize_into(String& buf, const Packet& data)
 {
-    serialize_into(buf, data.gps_measurements);
+    serialize_into(buf, data.time);
+    serialize_into(buf, data.position);
     serialize_into(buf, data.bmp_measurements);
     serialize_into(buf, data.acclr_measurements);
-}
-
-void date_append(const GpsDate& date)
-{
-    String date_;
-    date_ += "Date: ";
-    date_ += date.day;
-    date_ += '/';
-    date_ += date.month;
-    date_ += "/20";
-    if (!has_tens_digit(date.year)) { date_ += '0'; }
-    date_ += date.year;
-
-    file_appendln("/boot.txt", date_);
 }
 
 void file_appendln(const char* file_name, const String& data)

@@ -20,25 +20,28 @@ Result<Unit, Errc> init(Adafruit_GPS& gps)
     return Ok{Unit{}};
 }
 
-Result<GpsMeasurements, Errc> measure(Adafruit_GPS& gps)
+GpsDate read_date(Adafruit_GPS& gps)
 {
-    gps.read();
-    gps.read();
-    if (gps.newNMEAreceived() && !gps.parse(gps.lastNMEA())) {
-        return Err{Errc::Busy};
-    }
-    return Ok{GpsMeasurements{
-        {gps.hour, gps.minute, gps.seconds, gps.milliseconds},
-        {gps.year, gps.month, gps.day},
-        {gps.fix,
-         gps.fixquality,
-         gps.longitudeDegrees,
-         gps.lon,
-         gps.latitudeDegrees,
-         gps.lat,
-         gps.altitude,
-         gps.speed,
-         gps.satellites}}};
+    return GpsDate{gps.year, gps.month, gps.day};
+}
+
+GpsTime read_time(Adafruit_GPS& gps)
+{
+    return GpsTime{gps.hour, gps.minute, gps.seconds, gps.milliseconds};
+}
+
+GpsPosition read_position(Adafruit_GPS& gps)
+{
+    return GpsPosition{
+        gps.fix,
+        gps.fixquality,
+        gps.longitudeDegrees,
+        gps.lon,
+        gps.latitudeDegrees,
+        gps.lat,
+        gps.altitude,
+        gps.speed,
+        gps.satellites};
 }
 
 void print(GpsTime time)
@@ -93,13 +96,6 @@ void print(GpsPosition position)
         Serial.print("Satellites: ");
         Serial.println(static_cast<int>(position.satelites));
     }
-}
-
-void print(GpsMeasurements measurements)
-{
-    obc::print(measurements.time);
-    obc::print(measurements.date);
-    obc::print(measurements.position);
 }
 
 }  // namespace obc

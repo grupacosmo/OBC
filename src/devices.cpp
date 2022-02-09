@@ -11,31 +11,31 @@ namespace obc {
 
 void init()
 {
-    init(file).expect("SD init failure");
+    sd_init().expect("SD init failure");
 
     if (auto result = init(accelerometer); result.is_err()) {
-        file_appendln(
-            "/errors.txt",
+        const String msg =
             String("Accelerometer not initialized properly, errc: ")
-                + to_underlying(result.unwrap_err()));
-        panic("Accel Error.");
+            + to_underlying(result.unwrap_err());
+        file_appendln("/errors.txt", msg);
+        panic(msg.c_str());
     }
 
     if (auto result = init(bmp); result.is_err()) {
-        file_appendln(
-            "/errors.txt",
-            String("Barometer not initialized properly, errc: ")
-                + to_underlying(result.unwrap_err()));
+        const String msg = String("Barometer not initialized properly, errc: ")
+                         + to_underlying(result.unwrap_err());
+        file_appendln("/errors.txt", msg);
+        panic(msg.c_str());
     }
 
     if (auto result = init(gps); result.is_err()) {
-        file_appendln(
-            "/errors.txt",
-            String("GPS not initialized properly, errc: ")
-                + to_underlying(result.unwrap_err()));
+        const String msg = String("GPS not initialized properly, errc: ")
+                         + to_underlying(result.unwrap_err());
+        file_appendln("/errors.txt", msg);
+        panic(msg.c_str());
     }
 
-    obc::file_appendln("/boot.txt", "Devices initialized without problems.");
+    obc::file_appendln("/boot.txt", "Devices initialized properly.");
 }
 
 }  // namespace obc
