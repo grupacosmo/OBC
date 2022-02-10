@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-constexpr uint8_t chip_select = 4;
+constexpr uint8_t chip_select = D9;
 
 extern String flight_path_folder;
 extern File file;
@@ -120,7 +120,8 @@ void file_appendln(const char* file_name, const String& data)
 
 void file_appendln(const char* file_name, const char* data)
 {
-    file = SD.open(flight_path_folder + file_name, O_WRITE);
+    file =  // NOLINTNEXTLINE (hicpp-signed-bitwise)
+        SD.open(flight_path_folder + file_name, O_CREAT | O_WRITE | O_APPEND);
     file.println(data);
     file.close();
 }
