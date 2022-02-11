@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#include "format.hpp"
+
 namespace obc {
 
 namespace {
@@ -60,34 +62,18 @@ constexpr bool has_hundreds_digit(T n)
 
 void print(GpsTime time)
 {
-    Serial.print("Time: ");
-    if (!has_tens_digit(time.hour)) { Serial.print('0'); }
-    Serial.print(time.hour);
-    Serial.print(':');
-    if (!has_tens_digit(time.minute)) { Serial.print('0'); }
-    Serial.print(time.minute);
-    Serial.print(':');
-    if (!has_tens_digit(time.seconds)) { Serial.print('0'); }
-    Serial.print(time.seconds);
-    Serial.print('.');
-    if (!has_hundreds_digit(time.milliseconds)) {
-        if (!has_tens_digit(time.milliseconds)) { Serial.print("00"); }
-        else {
-            Serial.print("0");
-        }
-    }
-    Serial.println(time.milliseconds);
+    Serial.print(obc::format(
+        "Time: {%02d}:{%02d}:{%02d}.{%03d}",
+        time.hour,
+        time.minute,
+        time.seconds,
+        time.milliseconds));
 }
 
 void print(GpsDate date)
 {
-    Serial.print("Date: ");
-    Serial.print(date.day);
-    Serial.print('/');
-    Serial.print(date.month);
-    Serial.print("/20");
-    if (!has_tens_digit(date.year)) { Serial.print("0"); }
-    Serial.println(date.year);
+    Serial.print(
+        obc::format("Date: {}/{}/20{%02d}", date.day, date.month, date.year));
 }
 
 void print(GpsPosition position)
