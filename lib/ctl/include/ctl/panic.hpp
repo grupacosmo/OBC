@@ -7,8 +7,6 @@
 
 namespace ctl {
 
-enum class Errc { Busy };
-
 void panic(const char* msg, SourceLocation loc = SourceLocation::current());
 
 }  // namespace ctl

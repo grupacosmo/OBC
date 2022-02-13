@@ -1,25 +1,27 @@
+/// \file
 /// Error handling utility.
 ///
-/// 'Result<T, E>' type is used for returning and handling errors.
+/// `ctl::Result<T, E>` type is used for returning and handling errors.
 /// It is a tagged union that has 2 possible variants:
-/// * 'Ok<T>' - representing success and containing a value
-/// * 'Err<E>' - representing failure and containing an error value
+/// * `Ok<T>` - representing success and containing a value
+/// * `Err<E>` - representing failure and containing an error value
 ///
-/// The state of a result can be checked with 'is_ok' and 'is_err' methods.
+/// The state of a result can be checked with `is_ok` and `is_err` methods.
 ///
 /// There are multiple methods that extract the value contained in a
-/// Result<T, E>. If the Result is Err then:
-/// * 'unwrap' - panics with generic message,
-/// * 'expect' - panics with provided message,
-/// * 'unwrap_or_else' - returns result of executing provided function.
+/// `Result<T, E>`. If the Result is Err then:
+/// * `unwrap` - panics with generic message,
+/// * `expect` - panics with provided message,
+/// * `unwrap_or_else` - returns result of executing provided function.
 ///
-/// 'unwrap_err' may be used to extract contained error value.
+/// `unwrap_err` may be used to extract contained error value.
 ///
-/// 'Unit' type can be used in place of T for functions that may fail
+/// `Unit` type can be used in place of T for functions that may fail
 ///  but do not return a value.
 ///
 /// # Examples
 ///
+/// Result creation:
 /// ```
 /// Result<int, int> make_result() {
 ///     if (failure) { return Err{-1}; }
@@ -27,6 +29,7 @@
 /// }
 /// ```
 ///
+/// Error handling with Result:
 /// ```
 /// Result<File, ErrorKind> open_file(const char* path);
 /// Result<File, ErrorKind> create_file(const char* path);
@@ -54,25 +57,21 @@ namespace ctl {
 struct Unit {
 };
 
-namespace detail {
-
 template <typename T>
 struct Singleton {
     static_assert(!std::is_void_v<T>, "use 'Unit' instead of 'void'");
     T value;
 };
 
-}  // namespace detail
-
 template <typename T>
-struct Ok : detail::Singleton<T> {
+struct Ok : Singleton<T> {
 };
 
 template <typename T>
 Ok(T) -> Ok<T>;
 
 template <typename E>
-struct Err : detail::Singleton<E> {
+struct Err : Singleton<E> {
 };
 
 template <typename E>

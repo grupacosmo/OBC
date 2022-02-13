@@ -1,3 +1,4 @@
+/// \file
 /// The SourceLocation class represents the location in the source code.
 /// It includes filename, function name and line number.
 ///
