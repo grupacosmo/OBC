@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+using namespace ctl;
+
 namespace obc {
 
 Result<Unit, Errc> init(MMA8452Q& accelerometer)

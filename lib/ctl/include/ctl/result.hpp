@@ -41,15 +41,15 @@
 /// });
 /// ```
 
-#ifndef OBC_RESULT_HPP
-#define OBC_RESULT_HPP
+#ifndef CTL_RESULT_HPP
+#define CTL_RESULT_HPP
 
 #include <utility>
 
 #include "branch_prediction.hpp"
-#include "error.hpp"
+#include "panic.hpp"
 
-namespace obc {
+namespace ctl {
 
 struct Unit {
 };
@@ -325,14 +325,14 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     template <typename Self>
     static auto&& unwrap_impl(Self&& self)
     {
-        if (OBC_UNLIKELY(self.is_err())) { panic("unwrap"); }
+        if (CTL_UNLIKELY(self.is_err())) { panic("unwrap"); }
         return std::forward<Self>(self).ok.value;
     }
 
     template <typename Self>
     static auto&& unwrap_err_impl(Self&& self)
     {
-        if (OBC_UNLIKELY(self.is_ok())) { panic("unwrap_err"); }
+        if (CTL_UNLIKELY(self.is_ok())) { panic("unwrap_err"); }
         return std::forward<Self>(self).err.value;
     }
 
@@ -346,11 +346,11 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     template <typename Self>
     static auto&& expect_impl(Self&& self, const char* msg)
     {
-        if (OBC_UNLIKELY(self.is_err())) { panic(msg); }
+        if (CTL_UNLIKELY(self.is_err())) { panic(msg); }
         return std::forward<Self>(self).ok.value;
     }
 };
 
-}  // namespace obc
+}  // namespace ctl
 
 #endif

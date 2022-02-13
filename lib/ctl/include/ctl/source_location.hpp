@@ -18,10 +18,10 @@
 /// }
 /// ```
 
-#ifndef OBC_SOURCE_LOCATION_HPP
-#define OBC_SOURCE_LOCATION_HPP
+#ifndef CTL_SOURCE_LOCATION_HPP
+#define CTL_SOURCE_LOCATION_HPP
 
-namespace obc {
+namespace ctl {
 
 class SourceLocation {
     const char* file_ = "unknown";
@@ -48,6 +48,6 @@ class SourceLocation {
     constexpr int line() const { return line_; }
 };
 
-}  // namespace obc
+}  // namespace ctl
 
 #endif

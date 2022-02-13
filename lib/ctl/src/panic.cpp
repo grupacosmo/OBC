@@ -1,6 +1,6 @@
-#include "error.hpp"
+#include "ctl/panic.hpp"
 
-namespace obc {
+namespace ctl {
 
 void panic(const char* msg, SourceLocation loc)
 {
@@ -17,4 +17,4 @@ void panic(const char* msg, SourceLocation loc)
     while (true) {}
 }
 
-}  // namespace obc
+}  // namespace ctl
