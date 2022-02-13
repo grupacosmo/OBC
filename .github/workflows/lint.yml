@@ -30,10 +30,12 @@ jobs:
       - name: Build
         run: pio run -e nucleo_l476rg
       - name: Check
-        run: pio check --pattern="src/*.cpp" --pattern="include/*.hpp" --fail-on-defect=low --fail-on-defect=medium --fail-on-defect=high
+        run: pio check --pattern="src/*" --pattern="lib/ctl/include/ctl/*" --pattern="lib/ctl/src/*" --fail-on-defect=low --fail-on-defect=medium --fail-on-defect=high
+      - name: Compile ctl
+        run: sudo apt-get install gcc-arm-none-eabi && arm-none-eabi-gcc -c -Ilib/ctl/include/ lib/ctl/src/* -Wall -Wextra -Wpedantic -Wconversion -Werror -fconcepts
       - name: Format
         uses: DoozyX/clang-format-lint-action@v0.13
         with:
-          source: './src ./include'
+          source: './src ./lib/ctl/include/ctl ./lib/ctl/src'
           extensions: 'hpp,h,cpp,c'
           clangFormatVersion: 13

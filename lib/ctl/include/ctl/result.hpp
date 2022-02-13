@@ -183,6 +183,15 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
 
     Result(const Result& other) requires is_trivial_copy_constructor = default;
 
+    Result(Result&& other) noexcept requires is_trivial_move_constructor
+        = default;
+
+    Result& operator=(const Result& other)
+        requires is_trivial_copy_assignment = default;
+
+    Result& operator=(Result&& other) noexcept
+        requires is_trivial_move_assignment = default;
+
     Result(const Result& other)
         requires
             !is_trivial_copy_constructor
@@ -191,9 +200,6 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     {
         construct(other);
     }
-
-    Result(Result&& other) noexcept requires is_trivial_move_constructor
-        = default;
 
     Result(Result&& other) noexcept
         requires
@@ -205,9 +211,6 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     }
 
     Result& operator=(const Result& other)
-        requires is_trivial_copy_assignment = default;
-
-    Result& operator=(const Result& other)
         requires
             !is_trivial_copy_assignment
             && std::is_copy_assignable_v<Ok<T>>
@@ -216,9 +219,6 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
         assign(other);
         return *this;
     }
-
-    Result& operator=(Result&& other) noexcept
-        requires is_trivial_move_assignment = default;
 
     Result& operator=(Result&& other) noexcept
         requires
@@ -232,16 +232,21 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
 
     // clang-format on
 
-    ~Result() = default;
+    ;  // semicolon fixes intellisense parsing
 
     bool is_ok() const { return this->is_ok_; }
     bool is_err() const { return !this->is_ok_; }
 
+    /// Unwraps contained value
+    /// ```
+    /// int main() { result.unwrap(); }
+    /// ```
     T& unwrap() & { return unwrap_impl(*this); }
     T&& unwrap() && { return unwrap_impl(std::move(*this)); }
     const T& unwrap() const& { return unwrap_impl(*this); }
     const T&& unwrap() const&& { return unwrap_impl(std::move(*this)); }
 
+    /// trza podopisywac
     E& unwrap_err() & { return unwrap_err_impl(*this); }
     E&& unwrap_err() && { return unwrap_err_impl(std::move(*this)); }
     const E& unwrap_err() const& { return unwrap_err_impl(*this); }

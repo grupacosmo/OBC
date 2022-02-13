@@ -1,8 +1,8 @@
 /// \file
-/// The SourceLocation class represents the location in the source code.
+/// The `ctl::SourceLocation` class represents the location in the source code.
 /// It includes filename, function name and line number.
 ///
-/// SourceLocation can be used as a function's default parameter to
+/// `SourceLocation` can be used as a function's default parameter to
 /// automatically get the location of the function call.
 ///
 /// # Examples

@@ -2,6 +2,7 @@
 
 #include "acceleration.hpp"
 #include "barometer.hpp"
+#include "error.hpp"
 #include "gps.hpp"
 
 constexpr auto baud_rate = 9600l;
@@ -16,6 +17,8 @@ uint32_t timer = millis();
 
 void setup()
 {
+    std::set_terminate(obc::terminate_handler);
+    ctl::set_panic(obc::panic_handler);
     Serial.begin(baud_rate);
     Serial.println("setup");
     obc::init(accelerometer).expect("accelerometer init failure");

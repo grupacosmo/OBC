@@ -1,20 +1,21 @@
 #include "ctl/panic.hpp"
 
+#include <exception>
+
 namespace ctl {
 
-void panic(const char* msg, SourceLocation loc)
-{
-    Serial.print("program panicked at '");
-    Serial.print(msg);
-    Serial.print("', ");
-    Serial.print(loc.file());
-    Serial.print(":");
-    Serial.print(loc.function());
-    Serial.print(":");
-    Serial.print(loc.line());
-    Serial.print("\n");
-    Serial.flush();
-    while (true) {}
-}
+namespace {
+
+inline PanicHandler handler = [](const char* msg, SourceLocation loc) {
+    std::terminate();
+};
+
+}  // namespace
+
+PanicHandler get_panic() { return handler; }
+
+void set_panic(PanicHandler h) { handler = h; }
+
+void panic(const char* msg, SourceLocation loc) { handler(msg, loc); }
 
 }  // namespace ctl
