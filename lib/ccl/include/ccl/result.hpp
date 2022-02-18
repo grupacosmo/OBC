@@ -1,25 +1,27 @@
+/// \file
 /// Error handling utility.
 ///
-/// 'Result<T, E>' type is used for returning and handling errors.
+/// `ccl::Result<T, E>` type is used for returning and handling errors.
 /// It is a tagged union that has 2 possible variants:
-/// * 'Ok<T>' - representing success and containing a value
-/// * 'Err<E>' - representing failure and containing an error value
+/// * `Ok<T>` - representing success and containing a value
+/// * `Err<E>` - representing failure and containing an error value
 ///
-/// The state of a result can be checked with 'is_ok' and 'is_err' methods.
+/// The state of a result can be checked with `is_ok` and `is_err` methods.
 ///
 /// There are multiple methods that extract the value contained in a
-/// Result<T, E>. If the Result is Err then:
-/// * 'unwrap' - panics with generic message,
-/// * 'expect' - panics with provided message,
-/// * 'unwrap_or_else' - returns result of executing provided function.
+/// `Result<T, E>`. If the Result is Err then:
+/// * `unwrap` - panics with generic message,
+/// * `expect` - panics with provided message,
+/// * `unwrap_or_else` - returns result of executing provided function.
 ///
-/// 'unwrap_err' may be used to extract contained error value.
+/// `unwrap_err` may be used to extract contained error value.
 ///
-/// 'Unit' type can be used in place of T for functions that may fail
+/// `Unit` type can be used in place of T for functions that may fail
 ///  but do not return a value.
 ///
 /// # Examples
 ///
+/// Result creation:
 /// ```
 /// Result<int, int> make_result() {
 ///     if (failure) { return Err{-1}; }
@@ -27,6 +29,7 @@
 /// }
 /// ```
 ///
+/// Error handling with Result:
 /// ```
 /// Result<File, ErrorKind> open_file(const char* path);
 /// Result<File, ErrorKind> create_file(const char* path);
@@ -41,20 +44,18 @@
 /// });
 /// ```
 
-#ifndef OBC_RESULT_HPP
-#define OBC_RESULT_HPP
+#ifndef CCL_RESULT_HPP
+#define CCL_RESULT_HPP
 
 #include <utility>
 
 #include "branch_prediction.hpp"
-#include "error.hpp"
+#include "panic.hpp"
 
-namespace obc {
+namespace ccl {
 
 struct Unit {
 };
-
-namespace detail {
 
 template <typename T>
 struct Singleton {
@@ -62,17 +63,15 @@ struct Singleton {
     T value;
 };
 
-}  // namespace detail
-
 template <typename T>
-struct Ok : detail::Singleton<T> {
+struct Ok : Singleton<T> {
 };
 
 template <typename T>
 Ok(T) -> Ok<T>;
 
 template <typename E>
-struct Err : detail::Singleton<E> {
+struct Err : Singleton<E> {
 };
 
 template <typename E>
@@ -184,6 +183,15 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
 
     Result(const Result& other) requires is_trivial_copy_constructor = default;
 
+    Result(Result&& other) noexcept requires is_trivial_move_constructor
+        = default;
+
+    Result& operator=(const Result& other)
+        requires is_trivial_copy_assignment = default;
+
+    Result& operator=(Result&& other) noexcept
+        requires is_trivial_move_assignment = default;
+
     Result(const Result& other)
         requires
             !is_trivial_copy_constructor
@@ -192,9 +200,6 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     {
         construct(other);
     }
-
-    Result(Result&& other) noexcept requires is_trivial_move_constructor
-        = default;
 
     Result(Result&& other) noexcept
         requires
@@ -206,9 +211,6 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     }
 
     Result& operator=(const Result& other)
-        requires is_trivial_copy_assignment = default;
-
-    Result& operator=(const Result& other)
         requires
             !is_trivial_copy_assignment
             && std::is_copy_assignable_v<Ok<T>>
@@ -217,9 +219,6 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
         assign(other);
         return *this;
     }
-
-    Result& operator=(Result&& other) noexcept
-        requires is_trivial_move_assignment = default;
 
     Result& operator=(Result&& other) noexcept
         requires
@@ -233,7 +232,7 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
 
     // clang-format on
 
-    ~Result() = default;
+    ;  // semicolon fixes intellisense parsing
 
     bool is_ok() const { return this->is_ok_; }
     bool is_err() const { return !this->is_ok_; }
@@ -325,14 +324,14 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     template <typename Self>
     static auto&& unwrap_impl(Self&& self)
     {
-        if (OBC_UNLIKELY(self.is_err())) { panic("unwrap"); }
+        if (CCL_UNLIKELY(self.is_err())) { panic("unwrap"); }
         return std::forward<Self>(self).ok.value;
     }
 
     template <typename Self>
     static auto&& unwrap_err_impl(Self&& self)
     {
-        if (OBC_UNLIKELY(self.is_ok())) { panic("unwrap_err"); }
+        if (CCL_UNLIKELY(self.is_ok())) { panic("unwrap_err"); }
         return std::forward<Self>(self).err.value;
     }
 
@@ -346,11 +345,20 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     template <typename Self>
     static auto&& expect_impl(Self&& self, const char* msg)
     {
-        if (OBC_UNLIKELY(self.is_err())) { panic(msg); }
+        if (CCL_UNLIKELY(self.is_err())) { panic(msg); }
         return std::forward<Self>(self).ok.value;
     }
 };
 
-}  // namespace obc
+namespace prelude {
+
+using ccl::Err;
+using ccl::Ok;
+using ccl::Result;
+using ccl::Unit;
+
+}  // namespace prelude
+
+}  // namespace ccl
 
 #endif

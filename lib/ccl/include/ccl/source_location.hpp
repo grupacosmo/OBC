@@ -1,7 +1,8 @@
-/// The SourceLocation class represents the location in the source code.
+/// \file
+/// The `ccl::SourceLocation` class represents the location in the source code.
 /// It includes filename, function name and line number.
 ///
-/// SourceLocation can be used as a function's default parameter to
+/// `SourceLocation` can be used as a function's default parameter to
 /// automatically get the location of the function call.
 ///
 /// # Examples
@@ -18,10 +19,10 @@
 /// }
 /// ```
 
-#ifndef OBC_SOURCE_LOCATION_HPP
-#define OBC_SOURCE_LOCATION_HPP
+#ifndef CCL_SOURCE_LOCATION_HPP
+#define CCL_SOURCE_LOCATION_HPP
 
-namespace obc {
+namespace ccl {
 
 class SourceLocation {
     const char* file_ = "unknown";
@@ -48,6 +49,6 @@ class SourceLocation {
     constexpr int line() const { return line_; }
 };
 
-}  // namespace obc
+}  // namespace ccl
 
 #endif

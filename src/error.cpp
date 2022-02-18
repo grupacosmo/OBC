@@ -1,8 +1,15 @@
 #include "error.hpp"
 
+#include <Arduino.h>
+
 namespace obc {
 
-void panic(const char* msg, SourceLocation loc)
+void terminate_handler()
+{
+    while (true) {}
+}
+
+void panic_handler(const char* msg, ccl::SourceLocation loc)
 {
     Serial.print("program panicked at '");
     Serial.print(msg);
@@ -14,7 +21,7 @@ void panic(const char* msg, SourceLocation loc)
     Serial.print(loc.line());
     Serial.print("\n");
     Serial.flush();
-    while (true) {}
+    std::terminate();
 }
 
 }  // namespace obc
