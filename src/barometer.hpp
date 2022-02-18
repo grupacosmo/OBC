@@ -3,7 +3,7 @@
 
 #include <BMP280.h>
 
-#include <ctl/result.hpp>
+#include <ccl/result.hpp>
 
 #include "error.hpp"
 
@@ -15,8 +15,8 @@ struct BmpMeasurements {
     double altitude;
 };
 
-ctl::Result<ctl::Unit, Errc> init(BMP280& bmp);
-ctl::Result<BmpMeasurements, Errc> measure(BMP280& bmp);
+ccl::Result<ccl::Unit, Errc> init(BMP280& bmp);
+ccl::Result<BmpMeasurements, Errc> measure(BMP280& bmp);
 void print(BmpMeasurements measurements);
 
 }  // namespace obc

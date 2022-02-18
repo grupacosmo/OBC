@@ -29,13 +29,13 @@ jobs:
           pip install --upgrade platformio
       - name: Build
         run: pio run -e nucleo_l476rg
-      - name: Check
-        run: pio check --pattern="src/*" --pattern="lib/ctl/include/ctl/*" --pattern="lib/ctl/src/*" --fail-on-defect=low --fail-on-defect=medium --fail-on-defect=high
-      - name: Compile ctl
-        run: sudo apt-get install gcc-arm-none-eabi && arm-none-eabi-gcc -c -Ilib/ctl/include/ lib/ctl/src/* -Wall -Wextra -Wpedantic -Wconversion -Werror -fconcepts
+      - name: Pio check
+        run: pio check --pattern="src/*" --pattern="lib/ccl/include/ccl/*" --pattern="lib/ccl/src/*" --fail-on-defect=low --fail-on-defect=medium --fail-on-defect=high
+      - name: Check ccl warnings
+        run: sudo apt-get install gcc-arm-none-eabi && arm-none-eabi-gcc -c -Ilib/ccl/include/ lib/ccl/src/* -Wall -Wextra -Wpedantic -Wconversion -Werror -fconcepts -std=c++17
       - name: Format
         uses: DoozyX/clang-format-lint-action@v0.13
         with:
-          source: './src ./lib/ctl/include/ctl ./lib/ctl/src'
+          source: './src ./lib/ccl/include/ccl ./lib/ccl/src'
           extensions: 'hpp,h,cpp,c'
           clangFormatVersion: 13

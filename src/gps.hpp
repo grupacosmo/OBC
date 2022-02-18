@@ -4,7 +4,7 @@
 #include <Adafruit_GPS.h>
 
 #include <array>
-#include <ctl/result.hpp>
+#include <ccl/result.hpp>
 
 #include "error.hpp"
 
@@ -41,8 +41,8 @@ struct GpsMeasurements {
     GpsPosition position;
 };
 
-ctl::Result<ctl::Unit, Errc> init(Adafruit_GPS& gps);
-ctl::Result<GpsMeasurements, Errc> measure(Adafruit_GPS& gps);
+ccl::Result<ccl::Unit, Errc> init(Adafruit_GPS& gps);
+ccl::Result<GpsMeasurements, Errc> measure(Adafruit_GPS& gps);
 void print(GpsMeasurements measurements);
 
 }  // namespace obc

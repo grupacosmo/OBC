@@ -1,5 +1,5 @@
 /// \file
-/// The `ctl::SourceLocation` class represents the location in the source code.
+/// The `ccl::SourceLocation` class represents the location in the source code.
 /// It includes filename, function name and line number.
 ///
 /// `SourceLocation` can be used as a function's default parameter to
@@ -19,10 +19,10 @@
 /// }
 /// ```
 
-#ifndef CTL_SOURCE_LOCATION_HPP
-#define CTL_SOURCE_LOCATION_HPP
+#ifndef CCL_SOURCE_LOCATION_HPP
+#define CCL_SOURCE_LOCATION_HPP
 
-namespace ctl {
+namespace ccl {
 
 class SourceLocation {
     const char* file_ = "unknown";
@@ -49,6 +49,6 @@ class SourceLocation {
     constexpr int line() const { return line_; }
 };
 
-}  // namespace ctl
+}  // namespace ccl
 
 #endif

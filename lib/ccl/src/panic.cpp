@@ -1,14 +1,13 @@
-#include "ctl/panic.hpp"
+#include "ccl/panic.hpp"
 
 #include <exception>
 
-namespace ctl {
+namespace ccl {
 
 namespace {
 
-inline PanicHandler handler = [](const char* msg, SourceLocation loc) {
-    std::terminate();
-};
+inline PanicHandler handler =
+    [](const char* /* msg */, SourceLocation /* loc */) { std::terminate(); };
 
 }  // namespace
 
@@ -18,4 +17,4 @@ void set_panic(PanicHandler h) { handler = h; }
 
 void panic(const char* msg, SourceLocation loc) { handler(msg, loc); }
 
-}  // namespace ctl
+}  // namespace ccl

@@ -1,7 +1,7 @@
 /// \file
 /// Error handling utility.
 ///
-/// `ctl::Result<T, E>` type is used for returning and handling errors.
+/// `ccl::Result<T, E>` type is used for returning and handling errors.
 /// It is a tagged union that has 2 possible variants:
 /// * `Ok<T>` - representing success and containing a value
 /// * `Err<E>` - representing failure and containing an error value
@@ -44,15 +44,15 @@
 /// });
 /// ```
 
-#ifndef CTL_RESULT_HPP
-#define CTL_RESULT_HPP
+#ifndef CCL_RESULT_HPP
+#define CCL_RESULT_HPP
 
 #include <utility>
 
 #include "branch_prediction.hpp"
 #include "panic.hpp"
 
-namespace ctl {
+namespace ccl {
 
 struct Unit {
 };
@@ -237,16 +237,11 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     bool is_ok() const { return this->is_ok_; }
     bool is_err() const { return !this->is_ok_; }
 
-    /// Unwraps contained value
-    /// ```
-    /// int main() { result.unwrap(); }
-    /// ```
     T& unwrap() & { return unwrap_impl(*this); }
     T&& unwrap() && { return unwrap_impl(std::move(*this)); }
     const T& unwrap() const& { return unwrap_impl(*this); }
     const T&& unwrap() const&& { return unwrap_impl(std::move(*this)); }
 
-    /// trza podopisywac
     E& unwrap_err() & { return unwrap_err_impl(*this); }
     E&& unwrap_err() && { return unwrap_err_impl(std::move(*this)); }
     const E& unwrap_err() const& { return unwrap_err_impl(*this); }
@@ -329,14 +324,14 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     template <typename Self>
     static auto&& unwrap_impl(Self&& self)
     {
-        if (CTL_UNLIKELY(self.is_err())) { panic("unwrap"); }
+        if (CCL_UNLIKELY(self.is_err())) { panic("unwrap"); }
         return std::forward<Self>(self).ok.value;
     }
 
     template <typename Self>
     static auto&& unwrap_err_impl(Self&& self)
     {
-        if (CTL_UNLIKELY(self.is_ok())) { panic("unwrap_err"); }
+        if (CCL_UNLIKELY(self.is_ok())) { panic("unwrap_err"); }
         return std::forward<Self>(self).err.value;
     }
 
@@ -350,11 +345,20 @@ class [[nodiscard]] Result : detail::ResultBase<T, E> {
     template <typename Self>
     static auto&& expect_impl(Self&& self, const char* msg)
     {
-        if (CTL_UNLIKELY(self.is_err())) { panic(msg); }
+        if (CCL_UNLIKELY(self.is_err())) { panic(msg); }
         return std::forward<Self>(self).ok.value;
     }
 };
 
-}  // namespace ctl
+namespace prelude {
+
+using ccl::Err;
+using ccl::Ok;
+using ccl::Result;
+using ccl::Unit;
+
+}  // namespace prelude
+
+}  // namespace ccl
 
 #endif

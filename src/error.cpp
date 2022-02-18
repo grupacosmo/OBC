@@ -9,7 +9,7 @@ void terminate_handler()
     while (true) {}
 }
 
-void panic_handler(const char* msg, ctl::SourceLocation loc)
+void panic_handler(const char* msg, ccl::SourceLocation loc)
 {
     Serial.print("program panicked at '");
     Serial.print(msg);
@@ -21,7 +21,7 @@ void panic_handler(const char* msg, ctl::SourceLocation loc)
     Serial.print(loc.line());
     Serial.print("\n");
     Serial.flush();
-    terminate_handler();
+    std::terminate();
 }
 
 }  // namespace obc

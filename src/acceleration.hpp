@@ -3,7 +3,7 @@
 
 #include <SparkFun_MMA8452Q.h>
 
-#include <ctl/result.hpp>
+#include <ccl/result.hpp>
 
 #include "error.hpp"
 
@@ -15,8 +15,8 @@ struct Acceleration {
     short z;
 };
 
-ctl::Result<ctl::Unit, Errc> init(MMA8452Q& accelerometer);
-ctl::Result<Acceleration, Errc> measure(MMA8452Q& accelerometer);
+ccl::Result<ccl::Unit, Errc> init(MMA8452Q& accelerometer);
+ccl::Result<Acceleration, Errc> measure(MMA8452Q& accelerometer);
 void print(Acceleration acclr);
 
 }  // namespace obc

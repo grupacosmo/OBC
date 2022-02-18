@@ -7,7 +7,7 @@ Import("projenv")
 include_flags = []
 
 for path in projenv["CPPPATH"]:
-    if path != projenv["PROJECT_INCLUDE_DIR"] and not "OBC/lib/ctl" in path:
+    if path != projenv["PROJECT_INCLUDE_DIR"] and not "OBC/lib/" in path:
         include_flags.append(["-isystem", path])
 
 projenv.Append(
