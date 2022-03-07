@@ -2,8 +2,6 @@
 
 #include <Arduino.h>
 
-extern String flight_path_folder;
-
 namespace obc {
 
 Result<Unit, Errc> init(MMA8452Q& accelerometer)

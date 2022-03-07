@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 
-extern File file;
 extern MMA8452Q accelerometer;
 extern BMP280 bmp;
 extern Adafruit_GPS gps;
@@ -35,7 +34,7 @@ void init()
         panic(msg.c_str());
     }
 
-    obc::file_appendln("/boot.txt", "Devices initialized properly.");
+    file_appendln("/boot.txt", "Devices initialized properly.");
 }
 
 }  // namespace obc

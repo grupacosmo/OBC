@@ -2,18 +2,19 @@
 
 #include <Arduino.h>
 
-constexpr uint8_t chip_select = D9;
+constexpr uint8_t sd_chip_select = D9;
 
-extern String flight_path_folder;
-extern File file;
+String flight_path_folder;
 
-unsigned int flight_id = 1;
+File file;
 
 namespace obc {
 
 Result<Unit, Errc> sd_init()
 {
-    if (!SD.begin(chip_select)) { return Err{Errc::Busy}; }
+    unsigned int flight_id = 1;
+
+    if (!SD.begin(sd_chip_select)) { return Err{Errc::Busy}; }
 
     file_appendln("/boot.txt", "SD card initialized properly.");
 
@@ -64,7 +65,7 @@ void serialize_into(String& buf, const GpsPosition& data)
         buf += data.lon;
         buf += "\t";
         buf += "Speed (km/h): ";
-        buf += data.speed / velocity_conversion;
+        buf += data.speed / mph_to_kph_conversion;
         buf += "\t";
         buf += "Altitude: ";
         buf += data.altitude;
@@ -120,7 +121,8 @@ void file_appendln(const char* file_name, const String& data)
 
 void file_appendln(const char* file_name, const char* data)
 {
-    file =  // NOLINTNEXTLINE (hicpp-signed-bitwise)
+    file =
+        // NOLINTNEXTLINE (hicpp-signed-bitwise)
         SD.open(flight_path_folder + file_name, O_CREAT | O_WRITE | O_APPEND);
     file.println(data);
     file.close();

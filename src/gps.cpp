@@ -90,7 +90,7 @@ void print(GpsPosition position)
         Serial.print(position.longitude, 4);
         Serial.println(position.lon);
         Serial.print("Speed (km/h): ");
-        Serial.println(position.speed / velocity_conversion);
+        Serial.println(position.speed / mph_to_kph_conversion);
         Serial.print("Altitude: ");
         Serial.println(position.altitude);
         Serial.print("Satellites: ");

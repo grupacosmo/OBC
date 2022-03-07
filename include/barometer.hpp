@@ -2,7 +2,6 @@
 #define OBC_BAROMETER_HPP
 
 #include <BMP280.h>
-#include <SD.h>
 
 #include "error.hpp"
 #include "result.hpp"

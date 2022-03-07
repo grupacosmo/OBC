@@ -1,7 +1,6 @@
 #ifndef OBC_ACCELERATION_HPP
 #define OBC_ACCELERATION_HPP
 
-#include <SD.h>
 #include <SparkFun_MMA8452Q.h>
 
 #include "error.hpp"

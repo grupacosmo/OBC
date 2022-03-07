@@ -8,9 +8,8 @@
 
 constexpr auto baud_rate = 9600l;
 constexpr int interval = 2000;
-bool date_append = false;
 
-String flight_path_folder;
+bool is_date_appended = false;
 
 HardwareSerial Serial3{PC11, PC10};
 MMA8452Q accelerometer;
@@ -18,8 +17,6 @@ BMP280 bmp;
 Adafruit_GPS gps{&Serial3};
 
 uint32_t timer = millis();
-
-File file;
 
 void setup()
 {
@@ -43,11 +40,11 @@ void loop()
             logs.bmp_measurements = bmp_measurements.unwrap();
         }
 
-        if (!date_append) {
-            date_append = true;
+        if (!is_date_appended) {
             obc::file_appendln(
                 "/logs.csv",
                 obc::serialize(obc::read_date(gps)));
+            is_date_appended = true;
         }
 
         obc::file_appendln("/logs.csv", obc::serialize(logs));

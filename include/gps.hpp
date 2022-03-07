@@ -7,7 +7,7 @@
 #include "error.hpp"
 #include "result.hpp"
 
-constexpr nmea_float_t velocity_conversion = 1.85166f;
+constexpr nmea_float_t mph_to_kph_conversion = 1.85166f;
 
 namespace obc {
 
