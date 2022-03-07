@@ -11,10 +11,10 @@ constexpr int interval = 2000;
 
 bool is_date_appended = false;
 
-HardwareSerial Serial3{PC11, PC10};
+HardwareSerial Serial3(PC11, PC10);
 MMA8452Q accelerometer;
 BMP280 bmp;
-Adafruit_GPS gps{&Serial3};
+Adafruit_GPS gps(&Serial3);
 
 uint32_t timer = millis();
 
@@ -28,7 +28,7 @@ void setup()
 
 void loop()
 {
-    if (millis() - timer > interval) {
+    if (obc::measure(gps).is_ok() && millis() - timer > interval) {
         obc::Packet logs = {{}, {}, {}, {}, {}};
         const auto acclr = obc::measure(accelerometer);
         const auto bmp_measurements = obc::measure(bmp);
@@ -42,14 +42,16 @@ void loop()
 
         if (!is_date_appended) {
             obc::file_appendln(
-                "/logs.csv",
+                "/boot.txt",
                 obc::serialize(obc::read_date(gps)));
             is_date_appended = true;
         }
+
         String temp = "System time: ";
         temp += millis();
         temp += "\t";
         obc::file_appendln("/logs.csv", temp.c_str());
+
         obc::file_appendln("/logs.csv", obc::serialize(logs));
 
         timer = millis();

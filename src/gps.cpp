@@ -20,6 +20,15 @@ Result<Unit, Errc> init(Adafruit_GPS& gps)
     return Ok{Unit{}};
 }
 
+Result<Unit, Errc> measure(Adafruit_GPS& gps)
+{
+    gps.read();
+    if (gps.newNMEAreceived()) {
+        if (!gps.parse(gps.lastNMEA())) { return Err{Errc::Busy}; }
+    }
+    return Ok{Unit{}};
+}
+
 GpsDate read_date(Adafruit_GPS& gps)
 {
     return GpsDate{gps.year, gps.month, gps.day};

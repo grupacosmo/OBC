@@ -37,6 +37,7 @@ struct GpsPosition {
 };
 
 Result<Unit, Errc> init(Adafruit_GPS& gps);
+Result<Unit, Errc> measure(Adafruit_GPS& gps);
 GpsDate read_date(Adafruit_GPS& gps);
 GpsTime read_time(Adafruit_GPS& gps);
 GpsPosition read_position(Adafruit_GPS& gps);
