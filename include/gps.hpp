@@ -3,10 +3,11 @@
 
 #include <Adafruit_GPS.h>
 
-#include <array>
-
+#include "digits.hpp"
 #include "error.hpp"
 #include "result.hpp"
+
+constexpr nmea_float_t mph_to_kph_conversion = 1.85166f;
 
 namespace obc {
 
@@ -35,15 +36,10 @@ struct GpsPosition {
     uint8_t satelites;
 };
 
-struct GpsMeasurements {
-    GpsTime time;
-    GpsDate date;
-    GpsPosition position;
-};
-
 Result<Unit, Errc> init(Adafruit_GPS& gps);
-Result<GpsMeasurements, Errc> measure(Adafruit_GPS& gps);
-void print(GpsMeasurements measurements);
+GpsDate read_date(Adafruit_GPS& gps);
+GpsTime read_time(Adafruit_GPS& gps);
+GpsPosition read_position(Adafruit_GPS& gps);
 
 }  // namespace obc
 

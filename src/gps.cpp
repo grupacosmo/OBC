@@ -7,7 +7,6 @@ namespace obc {
 namespace {
 
 constexpr auto baud_rate = 9600l;
-constexpr nmea_float_t velocity_conversion = 1.85166f;
 
 }  // namespace
 
@@ -21,42 +20,29 @@ Result<Unit, Errc> init(Adafruit_GPS& gps)
     return Ok{Unit{}};
 }
 
-Result<GpsMeasurements, Errc> measure(Adafruit_GPS& gps)
+GpsDate read_date(Adafruit_GPS& gps)
 {
-    gps.read();
-    gps.read();
-    if (gps.newNMEAreceived() && !gps.parse(gps.lastNMEA())) {
-        return Err{Errc::Busy};
-    }
-    return Ok{GpsMeasurements{
-        {gps.hour, gps.minute, gps.seconds, gps.milliseconds},
-        {gps.year, gps.month, gps.day},
-        {gps.fix,
-         gps.fixquality,
-         gps.longitudeDegrees,
-         gps.lon,
-         gps.latitudeDegrees,
-         gps.lat,
-         gps.altitude,
-         gps.speed,
-         gps.satellites}}};
+    return GpsDate{gps.year, gps.month, gps.day};
 }
 
-namespace {
-
-template <typename T>  // requires std::unsigned_integral<T>
-constexpr bool has_tens_digit(T n)
+GpsTime read_time(Adafruit_GPS& gps)
 {
-    return n > 9;
+    return GpsTime{gps.hour, gps.minute, gps.seconds, gps.milliseconds};
 }
 
-template <typename T>  // requires std::unsigned_integral<T>
-constexpr bool has_hundreds_digit(T n)
+GpsPosition read_position(Adafruit_GPS& gps)
 {
-    return n > 99;
+    return GpsPosition{
+        gps.fix,
+        gps.fixquality,
+        gps.longitudeDegrees,
+        gps.lon,
+        gps.latitudeDegrees,
+        gps.lat,
+        gps.altitude,
+        gps.speed,
+        gps.satellites};
 }
-
-}  // namespace
 
 void print(GpsTime time)
 {
@@ -104,19 +90,12 @@ void print(GpsPosition position)
         Serial.print(position.longitude, 4);
         Serial.println(position.lon);
         Serial.print("Speed (km/h): ");
-        Serial.println(position.speed / velocity_conversion);
+        Serial.println(position.speed / mph_to_kph_conversion);
         Serial.print("Altitude: ");
         Serial.println(position.altitude);
         Serial.print("Satellites: ");
         Serial.println(static_cast<int>(position.satelites));
     }
-}
-
-void print(GpsMeasurements measurements)
-{
-    obc::print(measurements.time);
-    obc::print(measurements.date);
-    obc::print(measurements.position);
 }
 
 }  // namespace obc
