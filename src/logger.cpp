@@ -77,7 +77,7 @@ void serialize_into(String& buf, const GpsPosition& data)
 
 void serialize_into(String& buf, const GpsDate& data)
 {
-    buf += "Date: ";
+    buf += " Date: ";
     buf += data.day;
     buf += '/';
     buf += data.month;

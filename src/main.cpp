@@ -28,7 +28,7 @@ void setup()
 
 void loop()
 {
-    if (timer - millis() > interval) {
+    if (millis() - timer > interval) {
         obc::Packet logs = {{}, {}, {}, {}, {}};
         const auto acclr = obc::measure(accelerometer);
         const auto bmp_measurements = obc::measure(bmp);
@@ -46,7 +46,10 @@ void loop()
                 obc::serialize(obc::read_date(gps)));
             is_date_appended = true;
         }
-
+        String temp = "System time: ";
+        temp += millis();
+        temp += "\t";
+        obc::file_appendln("/logs.csv", temp.c_str());
         obc::file_appendln("/logs.csv", obc::serialize(logs));
 
         timer = millis();
