@@ -25,6 +25,13 @@ Result<Unit, Errc> sd_init()
 
     file_appendln("/boot.txt", "Booting time: " + String(millis()) + "ms");
 
+    String logs_legend =
+        "Time\tSystem time\tFix\tQuality\tLocation\tSpeed (km/h)\t"
+        "Altitude(gps)\tSatellites\tTemperature\tPressure\tAltitude(gps)\t"
+        "Acceleration X\tAcceleration Y\tAcceleration Z";
+
+    file_appendln("/logs.csv", logs_legend.c_str());
+
     return Ok{Unit{}};
 }
 
@@ -47,31 +54,32 @@ void serialize_into(String& buf, const GpsTime& data)
     }
     buf += data.milliseconds;
     buf += "\t";
+    buf += millis();
+    buf += "\t";
 }
 
 void serialize_into(String& buf, const GpsPosition& data)
 {
-    buf += "Fix: ";
     buf += static_cast<int>(data.fix);
-    buf += " quality: ";
+    buf += "\t";
     buf += static_cast<int>(data.fixquality);
     buf += "\t";
     if (data.fix) {
-        buf += "Location: ";
         buf += String(data.latitude, 4);
         buf += data.lat;
         buf += ", ";
         buf += String(data.longitude, 4);
         buf += data.lon;
         buf += "\t";
-        buf += "Speed (km/h): ";
         buf += data.speed / mph_to_kph_conversion;
         buf += "\t";
-        buf += "Altitude: ";
         buf += data.altitude;
         buf += "\t";
-        buf += "Satellites: ";
         buf += static_cast<int>(data.satelites);
+        buf += "\t";
+    }
+    else {
+        for (int i = 0; i < 5; ++i) { buf += "0\t"; }
     }
 }
 

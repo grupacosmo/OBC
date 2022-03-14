@@ -47,11 +47,6 @@ void loop()
             is_date_appended = true;
         }
 
-        String temp = "System time: ";
-        temp += millis();
-        temp += "\t";
-        obc::file_appendln("/logs.csv", temp.c_str());
-
         obc::file_appendln("/logs.csv", obc::serialize(logs));
 
         timer = millis();
