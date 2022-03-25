@@ -13,28 +13,24 @@ void init()
     sd_init().expect("SD init failure");
 
     if (auto result = init(accelerometer); result.is_err()) {
-        const String msg =
+        log_error_and_panic(
             String("Accelerometer not initialized properly, errc: ")
-            + to_underlying(result.unwrap_err());
-        file_appendln("/errors.txt", msg);
-        panic(msg.c_str());
+            + to_underlying(result.unwrap_err()));
     }
 
     if (auto result = init(bmp); result.is_err()) {
-        const String msg = String("Barometer not initialized properly, errc: ")
-                         + to_underlying(result.unwrap_err());
-        file_appendln("/errors.txt", msg);
-        panic(msg.c_str());
+        log_error_and_panic(
+            String("Barometer not initialized properly, errc: ")
+            + to_underlying(result.unwrap_err()));
     }
 
     if (auto result = init(gps); result.is_err()) {
-        const String msg = String("GPS not initialized properly, errc: ")
-                         + to_underlying(result.unwrap_err());
-        file_appendln("/errors.txt", msg);
-        panic(msg.c_str());
+        log_error_and_panic(
+            String("GPS not initialized properly, errc: ")
+            + to_underlying(result.unwrap_err()));
     }
 
-    file_appendln("/boot.txt", "Devices initialized properly.");
+    log_boot("Devices initialized properly.");
 }
 
 }  // namespace obc
