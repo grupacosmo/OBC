@@ -1,11 +1,11 @@
 #include <Arduino.h>
-
+#include <ArduinoJson.h>
 #include "acceleration.hpp"
 #include "barometer.hpp"
 #include "devices.hpp"
 #include "gps.hpp"
 #include "logger.hpp"
-
+#include "lora.hpp"
 constexpr auto baud_rate = 9600l;
 constexpr int interval = 2000;
 
@@ -22,7 +22,7 @@ void setup()
 {
     Serial.begin(baud_rate);
     Serial.println("setup");
-
+    auto a = obc::init_lora();
     obc::init();
 }
 
@@ -46,7 +46,8 @@ void loop()
                 obc::serialize(obc::read_date(gps)));
             is_date_appended = true;
         }
-
+        Serial.println("Hej");
+        obc::lora_serialize(logs);
         obc::file_appendln("/logs.csv", obc::serialize(logs));
 
         timer = millis();

@@ -18,8 +18,8 @@ Result<Unit, Errc> sd_init()
 
     file_appendln("/boot.txt", "SD card initialized properly.");
 
-    while (SD.exists("/FLIGHT_" + String(flight_id))) { flight_id++; }
-    flight_path_folder = "/FLIGHT_" + String(flight_id);
+    while (SD.exists("/FLIGHT" + String(flight_id))) { flight_id++; }
+    flight_path_folder = "/FLIGHT" + String(flight_id);
 
     SD.mkdir(flight_path_folder);
 
@@ -125,6 +125,7 @@ void serialize_into(String& buf, const Packet& data)
 void file_appendln(const char* file_name, const String& data)
 {
     file_appendln(file_name, data.c_str());
+
 }
 
 void file_appendln(const char* file_name, const char* data)
