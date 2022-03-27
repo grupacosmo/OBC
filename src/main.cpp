@@ -41,13 +41,12 @@ void loop()
         }
 
         if (!is_date_appended) {
-            obc::file_appendln(
-                "/boot.txt",
-                obc::serialize(obc::read_date(gps)));
+            obc::log_boot(obc::serialize(obc::read_date(gps)));
             is_date_appended = true;
         }
+
         obc::lora_serialize(logs);
-        obc::file_appendln("/logs.csv", obc::serialize(logs));
+        obc::log_data(obc::serialize(logs));
 
         timer = millis();
     }

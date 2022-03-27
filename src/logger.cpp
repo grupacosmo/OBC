@@ -10,29 +10,80 @@ File file;
 
 namespace obc {
 
-Result<Unit, Errc> sd_init()
+namespace {
+
+void init_flight_path_folder()
 {
     unsigned int flight_id = 1;
+    do {
+        flight_path_folder = "/FLIGHT" + String(flight_id);
+        ++flight_id;
+    } while (SD.exists(flight_path_folder));
+}
 
+void file_appendln(const char* file_name, const char* data)
+{
+    // NOLINTNEXTLINE (hicpp-signed-bitwise)
+    file = SD.open(file_name, O_CREAT | O_WRITE | O_APPEND);
+    file.println(data);
+    file.close();
+}
+
+[[maybe_unused]] void file_appendln(const char* file_name, const String& data)
+{
+    file_appendln(file_name, data.c_str());
+}
+
+[[maybe_unused]] void file_appendln(const String& file_name, const char* data)
+{
+    file_appendln(file_name.c_str(), data);
+}
+
+[[maybe_unused]] void file_appendln(const String& file_name, const String& data)
+{
+    file_appendln(file_name.c_str(), data.c_str());
+}
+
+}  // namespace
+
+Result<Unit, Errc> sd_init()
+{
     if (!SD.begin(sd_chip_select)) { return Err{Errc::Busy}; }
 
-    file_appendln("/boot.txt", "SD card initialized properly.");
+    init_flight_path_folder();
+    if (!SD.mkdir(flight_path_folder)) { return Err{Errc::Busy}; }
 
-    while (SD.exists("/FLIGHT" + String(flight_id))) { flight_id++; }
-    flight_path_folder = "/FLIGHT" + String(flight_id);
+    log_boot("Booting time: " + String(millis()) + "ms");
 
-    SD.mkdir(flight_path_folder);
-
-    file_appendln("/boot.txt", "Booting time: " + String(millis()) + "ms");
-
-    String logs_legend =
+    const auto logs_legend =
         "Time\tSystem time\tFix\tQuality\tLocation\tSpeed (km/h)\t"
         "Altitude(gps)\tSatellites\tTemperature\tPressure\tAltitude(gps)\t"
         "Acceleration X\tAcceleration Y\tAcceleration Z";
 
-    file_appendln("/logs.csv", logs_legend.c_str());
+    log_data(logs_legend);
 
     return Ok{Unit{}};
+}
+
+void log_boot(const char* msg)
+{
+    file_appendln(flight_path_folder + "/boot.txt", msg);
+}
+
+void log_data(const char* msg)
+{
+    file_appendln(flight_path_folder + "/logs.csv", msg);
+}
+
+void log_error(const char* msg)
+{
+    file_appendln(flight_path_folder + "/errors.txt", msg);
+}
+
+void log_error_and_panic(const char* msg, SourceLocation loc)
+{
+    file_appendln(flight_path_folder + "/errors.txt", msg);
+    panic(msg, loc);
 }
 
 void serialize_into(String& buf, const GpsTime& data)
@@ -120,21 +171,6 @@ void serialize_into(String& buf, const Packet& data)
     serialize_into(buf, data.position);
     serialize_into(buf, data.bmp_measurements);
     serialize_into(buf, data.acclr_measurements);
-}
-
-void file_appendln(const char* file_name, const String& data)
-{
-    file_appendln(file_name, data.c_str());
-
-}
-
-void file_appendln(const char* file_name, const char* data)
-{
-    file =
-        // NOLINTNEXTLINE (hicpp-signed-bitwise)
-        SD.open(flight_path_folder + file_name, O_CREAT | O_WRITE | O_APPEND);
-    file.println(data);
-    file.close();
 }
 
 }  // namespace obc
