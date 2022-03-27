@@ -22,7 +22,7 @@ void setup()
 {
     Serial.begin(baud_rate);
     Serial.println("setup");
-    auto a = obc::init_lora();
+    //auto a = obc::init_lora();
     obc::init();
 }
 
@@ -46,7 +46,6 @@ void loop()
                 obc::serialize(obc::read_date(gps)));
             is_date_appended = true;
         }
-        Serial.println("Hej");
         obc::lora_serialize(logs);
         obc::file_appendln("/logs.csv", obc::serialize(logs));
 
