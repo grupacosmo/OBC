@@ -1,13 +1,14 @@
 #include <Arduino.h>
-#include <ArduinoJson.h>
+
 #include "acceleration.hpp"
 #include "barometer.hpp"
 #include "devices.hpp"
 #include "gps.hpp"
 #include "logger.hpp"
 #include "lora.hpp"
+
 constexpr auto baud_rate = 9600l;
-constexpr int interval = 2000;
+constexpr int interval = 1000;
 
 bool is_date_appended = false;
 
@@ -22,8 +23,8 @@ void setup()
 {
     Serial.begin(baud_rate);
     Serial.println("setup");
-    //auto a = obc::init_lora();
     obc::init();
+    Serial.println("Setup done");
 }
 
 void loop()
@@ -45,7 +46,9 @@ void loop()
             is_date_appended = true;
         }
 
-        obc::lora_serialize(logs);
+        const auto json_logs = obc::to_json(logs);
+        obc::lora_serialize(json_logs);
+
         obc::log_data(obc::serialize(logs));
 
         timer = millis();

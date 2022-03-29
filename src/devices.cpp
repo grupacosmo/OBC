@@ -30,6 +30,12 @@ void init()
             + to_underlying(result.unwrap_err()));
     }
 
+    if (auto result = init_lora(); result.is_err()) {
+        log_error_and_panic(
+            String("Lora not initialized properly, errc: ")
+            + to_underlying(result.unwrap_err()));
+    }
+
     log_boot("Devices initialized properly.");
 }
 

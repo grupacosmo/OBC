@@ -8,12 +8,13 @@
 #include "barometer.hpp"
 #include "gps.hpp"
 #include "logger.hpp"
+#include "lora.hpp"
 #include "utils.hpp"
 
 namespace obc {
 
 void init();
 
-}
+}  // namespace obc
 
 #endif
