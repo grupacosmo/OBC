@@ -8,7 +8,8 @@
 #include "lora.hpp"
 
 constexpr auto baud_rate = 9600l;
-constexpr int interval = 1000;
+constexpr int interval = 2000;
+constexpr int lora_interval = 15000;
 
 bool is_date_appended = false;
 
@@ -18,13 +19,12 @@ BMP280 bmp;
 Adafruit_GPS gps(&Serial3);
 
 uint32_t timer = millis();
+uint32_t lora_timer = millis();
 
 void setup()
 {
     Serial.begin(baud_rate);
-    Serial.println("setup");
     obc::init();
-    Serial.println("Setup done");
 }
 
 void loop()
@@ -46,10 +46,12 @@ void loop()
             is_date_appended = true;
         }
 
-        const auto json_logs = obc::to_json(logs);
-        obc::lora_serialize(json_logs);
-
         obc::log_data(obc::serialize(logs));
+
+        if (millis() - lora_timer > lora_interval) {
+            obc::send_packet(obc::to_json(logs).as<String>());
+            lora_timer = millis();
+        }
 
         timer = millis();
     }

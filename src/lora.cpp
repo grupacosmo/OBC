@@ -2,23 +2,26 @@
 
 namespace obc {
 
-constexpr auto baud_rate = 9600l;
-
 HardwareSerial Serial5(PD2, PC12);
+
+constexpr auto baud_rate = 9600l;
 
 Result<Unit, Errc> init_lora()
 {
+    Serial5.begin(baud_rate);
     // NOLINTNEXTLINE(cppcoreguidelines-init-variables)
     constexpr std::array commands = {
         "AT+DR=EU868",
         "AT+CH=NUM,0-2",
         "AT+MODE=LWOTAA",
-        "AT+JOIN"};
-    Serial5.begin(baud_rate);
+        "AT+JOIN",
+        "AT+UART=TIMEOUT,2000",
+    };
 
     for (const auto command : commands) {
         Serial5.println(command);
-        delay(8000);
+        Serial.println("done");
+        delay(10000);
         String payload = Serial5.readString();
         if (payload.startsWith("ERR")) { return Err{Errc::Busy}; }
     }
@@ -28,49 +31,46 @@ Result<Unit, Errc> init_lora()
 DynamicJsonDocument to_json(const Packet &data)
 {
     DynamicJsonDocument json(256);
-    json["AccX"] = data.acclr_measurements.x;
-    json["AccY"] = data.acclr_measurements.y;
-    json["AccZ"] = data.acclr_measurements.z;
+    // json["AccX"] = data.acclr_measurements.x;
+    // json["AccY"] = data.acclr_measurements.y;
+    // json["AccZ"] = data.acclr_measurements.z;
     json["Alti"] = String(data.bmp_measurements.altitude, 2);
-    json["Fix"] = data.position.fix;
-    json["Pres"] = String(data.bmp_measurements.pressure, 2);
-    json["Loca"] =
-        String(data.position.latitude) + String(data.position.longitude);
-    json["Sate"] = data.position.satelites;
-    json["Speed"] = data.position.speed / mph_to_kph_conversion;
+    // json["Fix"] = data.position.fix;
+    // json["Pres"] = String(data.bmp_measurements.pressure, 2);
+    // json["Loca"] =
+    //     String(data.position.latitude) + String(data.position.longitude);
+    // json["Sate"] = data.position.satelites;
+    // json["Speed"] = data.position.speed / mph_to_kph_conversion;
     json["Temp"] = String(data.bmp_measurements.temperature, 2);
-    json["Time"] = String(data.date.year) + String(data.date.month)
-                 + String(data.date.day) + String(data.time.hour)
-                 + String(data.time.minute) + String(data.time.seconds)
-                 + String(data.time.milliseconds);
 
     return json;
 }
 
-String json_to_str(const DynamicJsonDocument &json)
+String make_string_from_count(size_t count, char c)
 {
-    return json.as<String>();
+    String result;
+    result.reserve(count);
+    for (size_t i = 0; i < count; ++i) { result.concat(c); }
+    return result;
 }
 
-String encode(const DynamicJsonDocument &packet)
+String encode(const String &packet)
 {
-    auto payload = json_to_str(packet);
-    // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays)
-    char encoded[512];
-    Serial.println(&payload[0]);
-    Serial.println(payload.length());
-
-    Base64.encode(encoded, &payload[0], payload.length());  // NOLINT
-
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    return String(encoded);
+    // NOLINTNEXTLINE(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
+    String input = packet;
+    // NOLINTNEXTLINE(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
+    const auto len = Base64.encodedLength(packet.length());
+    auto result = make_string_from_count(len, ' ');
+    // NOLINTNEXTLINE(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
+    Base64.encode(&result[0], &input[0], packet.length());
+    return result;
 }
 
-void lora_serialize(const DynamicJsonDocument &packet)
+void send_packet(const String &packet)
 {
-    const auto encoded_logs = encode(packet);
-    String encoded = String("AT+MSG=") + encoded_logs;
-    Serial5.println(encoded);
+    auto encoded_logs = encode(packet);
+    String encoded = String("AT+MSG=") + "\"" + encoded_logs + "\"";
+    Serial5.print(encoded);
 }
 
 }  // namespace obc

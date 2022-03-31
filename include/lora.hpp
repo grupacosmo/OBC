@@ -12,9 +12,9 @@ namespace obc {
 
 Result<Unit, Errc> init_lora();
 DynamicJsonDocument to_json(const Packet &);
-String json_to_str(const DynamicJsonDocument &);
+String make_string_from_count(size_t count, char c);
 String encode(const String &);
-void lora_serialize(const DynamicJsonDocument &);
+void send_packet(const String &);
 
 }  // namespace obc
 
