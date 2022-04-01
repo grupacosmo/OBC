@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <IWatchdog.h>
 
 #include "acceleration.hpp"
 #include "barometer.hpp"
@@ -8,8 +9,9 @@
 #include "lora.hpp"
 
 constexpr auto baud_rate = 9600l;
-constexpr int interval = 2000;
-constexpr int lora_interval = 15000;
+constexpr auto logs_interval = 2000;
+constexpr auto lora_interval = 60000;
+constexpr auto watchdog_interval = 10000000;
 
 bool is_date_appended = false;
 
@@ -25,11 +27,12 @@ void setup()
 {
     Serial.begin(baud_rate);
     obc::init();
+    IWatchdog.begin(watchdog_interval);
 }
 
 void loop()
 {
-    if (obc::measure(gps).is_ok() && millis() - timer > interval) {
+    if (obc::measure(gps).is_ok() && millis() - timer > logs_interval) {
         obc::Packet logs = {{}, {}, {}, {}, {}};
         const auto acclr = obc::measure(accelerometer);
         const auto bmp_measurements = obc::measure(bmp);
@@ -54,5 +57,6 @@ void loop()
         }
 
         timer = millis();
+        IWatchdog.reload();
     }
 }

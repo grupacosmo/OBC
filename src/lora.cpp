@@ -20,7 +20,6 @@ Result<Unit, Errc> init_lora()
 
     for (const auto &command : commands) {
         Serial5.println(command);
-        Serial.println("done");
         delay(10000);
         String payload = Serial5.readString();
         if (payload.startsWith("ERR")) { return Err{Errc::Busy}; }
