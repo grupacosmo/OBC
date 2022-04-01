@@ -49,7 +49,7 @@ void loop()
         obc::log_data(obc::serialize(logs));
 
         if (millis() - lora_timer > lora_interval) {
-            obc::send_packet(obc::to_json(logs).as<String>());
+            obc::send_packet(obc::lora_packet(logs));
             lora_timer = millis();
         }
 

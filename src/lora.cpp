@@ -18,7 +18,7 @@ Result<Unit, Errc> init_lora()
         "AT+UART=TIMEOUT,2000",
     };
 
-    for (const auto command : commands) {
+    for (const auto &command : commands) {
         Serial5.println(command);
         Serial.println("done");
         delay(10000);
@@ -28,22 +28,16 @@ Result<Unit, Errc> init_lora()
     return Ok{Unit{}};
 }
 
-DynamicJsonDocument to_json(const Packet &data)
+String lora_packet(const Packet &data)
 {
-    DynamicJsonDocument json(256);
-    // json["AccX"] = data.acclr_measurements.x;
-    // json["AccY"] = data.acclr_measurements.y;
-    // json["AccZ"] = data.acclr_measurements.z;
-    json["Alti"] = String(data.bmp_measurements.altitude, 2);
-    // json["Fix"] = data.position.fix;
-    // json["Pres"] = String(data.bmp_measurements.pressure, 2);
-    // json["Loca"] =
-    //     String(data.position.latitude) + String(data.position.longitude);
-    // json["Sate"] = data.position.satelites;
-    // json["Speed"] = data.position.speed / mph_to_kph_conversion;
-    json["Temp"] = String(data.bmp_measurements.temperature, 2);
+    String to_send;
+    to_send += String(data.bmp_measurements.altitude, 2) += String(";") +=
+        String(data.position.latitude) += String(";") +=
+        String(data.position.longitude) += String(";") +=
+        String(data.position.speed / mph_to_kph_conversion) += String(";") +=
+        String(data.bmp_measurements.temperature, 2);
 
-    return json;
+    return to_send;
 }
 
 String make_string_from_count(size_t count, char c)
@@ -56,8 +50,7 @@ String make_string_from_count(size_t count, char c)
 
 String encode(const String &packet)
 {
-    // NOLINTNEXTLINE(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
-    String input = packet;
+    auto input = packet;
     // NOLINTNEXTLINE(bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions)
     const auto len = Base64.encodedLength(packet.length());
     auto result = make_string_from_count(len, ' ');

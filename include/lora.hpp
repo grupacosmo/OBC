@@ -2,7 +2,6 @@
 #define OBC_LORA_HPP
 
 #include <Arduino.h>
-#include <ArduinoJson.h>
 #include <Base64.h>
 
 #include "logger.hpp"
@@ -11,7 +10,7 @@
 namespace obc {
 
 Result<Unit, Errc> init_lora();
-DynamicJsonDocument to_json(const Packet &);
+String lora_packet(const Packet &);
 String make_string_from_count(size_t count, char c);
 String encode(const String &);
 void send_packet(const String &);
