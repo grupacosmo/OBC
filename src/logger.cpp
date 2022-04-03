@@ -16,7 +16,7 @@ void init_flight_path_folder()
 {
     unsigned int flight_id = 1;
     do {
-        flight_path_folder = "/FLIGHT" + String(flight_id);
+        flight_path_folder = "/F_" + String(flight_id);
         ++flight_id;
     } while (SD.exists(flight_path_folder));
 }
