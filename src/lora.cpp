@@ -31,8 +31,8 @@ String lora_packet(const Packet &data)
 {
     String to_send;
     to_send += String(data.bmp_measurements.altitude, 2) += String(";") +=
-        String(data.position.latitude) += String(";") +=
-        String(data.position.longitude) += String(";") +=
+        String(data.position.latitude, 4) += String(";") +=
+        String(data.position.longitude, 4) += String(";") +=
         String(data.position.speed / mph_to_kph_conversion) += String(";") +=
         String(data.bmp_measurements.temperature, 2);
 
