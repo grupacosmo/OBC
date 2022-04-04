@@ -56,7 +56,7 @@ Result<Unit, Errc> sd_init()
     log_boot("Booting time: " + String(millis()) + "ms");
 
     const auto logs_legend =
-        "Time\tSystem time\tFix\tQuality\tLocation\tSpeed (km/h)\t"
+        "Time\tSystem time\tFix\tQuality\tLatitude\tLongtitude\tSpeed (km/h)\t"
         "Altitude(gps)\tSatellites\tTemperature\tPressure\tAltitude(gps)\t"
         "Acceleration X\tAcceleration Y\tAcceleration Z";
 

@@ -10,6 +10,7 @@ namespace obc {
 
 void init()
 {
+    pinMode(D6, OUTPUT);
     sd_init().expect("SD init failure");
 
     if (auto result = init(accelerometer); result.is_err()) {
@@ -37,6 +38,13 @@ void init()
     }
 
     log_boot("Devices initialized properly.");
+}
+
+void buzzer()
+{
+    digitalWrite(D6, 255);
+    delay(100);
+    digitalWrite(D6, LOW);
 }
 
 }  // namespace obc
