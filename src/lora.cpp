@@ -30,7 +30,7 @@ Result<Unit, Errc> init_lora()
 String lora_packet(const Packet &data)
 {
     String to_send;
-    to_send += String(data.bmp_measurements.altitude, 2) += String(";") +=
+    to_send += String(data.position.altitude, 2) += String(";") +=
         String(data.position.latitude, 4) += String(";") +=
         String(data.position.longitude, 4) += String(";") +=
         String(data.position.speed / mph_to_kph_conversion) += String(";") +=
