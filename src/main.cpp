@@ -56,7 +56,6 @@ void loop()
             lora_timer = millis();
         }
 
-        obc::buzzer();
         timer = millis();
         IWatchdog.reload();
     }

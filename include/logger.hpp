@@ -7,6 +7,7 @@
 
 #include "acceleration.hpp"
 #include "barometer.hpp"
+#include "buzzer.hpp"
 #include "digits.hpp"
 #include "error.hpp"
 #include "gps.hpp"

@@ -14,7 +14,6 @@
 namespace obc {
 
 void init();
-void buzzer();
 
 }  // namespace obc
 

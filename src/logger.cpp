@@ -57,8 +57,8 @@ Result<Unit, Errc> sd_init()
 
     const auto logs_legend =
         "Time\tSystem time\tFix\tQuality\tLatitude\tLongtitude\tSpeed (km/h)\t"
-        "Altitude(gps)\tSatellites\tTemperature\tPressure\tRaw altitude(bmp)\t"
-        "Relative altitude\tAcceleration X\tAcceleration Y\tAcceleration Z";
+        "Altitude(gps)\tSatellites\tTemperature\tPressure\tAltitude(gps)\t"
+        "Acceleration X\tAcceleration Y\tAcceleration Z";
 
     log_data(logs_legend);
 
@@ -128,6 +128,7 @@ void serialize_into(String& buf, const GpsPosition& data)
         buf += "\t";
         buf += static_cast<int>(data.satelites);
         buf += "\t";
+        obc::buzzer();
     }
     else {
         for (int i = 0; i < 5; ++i) { buf += "0\t"; }
@@ -151,9 +152,7 @@ void serialize_into(String& buf, const BmpMeasurements& data)
     buf += "\t";
     buf += data.pressure;
     buf += "\t";
-    buf += data.raw_altitude;
-    buf += "\t";
-    buf += data.altitude_relative_to_ground;
+    buf += data.altitude;
     buf += "\t";
 }
 
