@@ -32,7 +32,7 @@ void setup()
 
 void loop()
 {
-    if (obc::measure(gps).is_ok() && millis() - timer > logs_interval) {
+    if (obc::measure(gps).is_ok() and millis() - timer > logs_interval) {
         obc::Packet logs = {{}, {}, {}, {}, {}};
         const auto acclr = obc::measure(accelerometer);
         const auto bmp_measurements = obc::measure(bmp);
@@ -54,6 +54,7 @@ void loop()
         if (millis() - lora_timer > lora_interval) {
             obc::send_packet(obc::lora_packet(logs));
             lora_timer = millis();
+            if (not logs.position.fix) { obc::buzzer(1); }
         }
 
         timer = millis();

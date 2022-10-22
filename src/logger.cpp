@@ -128,7 +128,7 @@ void serialize_into(String& buf, const GpsPosition& data)
         buf += "\t";
         buf += static_cast<int>(data.satelites);
         buf += "\t";
-        obc::buzzer();
+        obc::buzzer(2);
     }
     else {
         for (int i = 0; i < 5; ++i) { buf += "0\t"; }

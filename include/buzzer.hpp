@@ -5,7 +5,7 @@
 
 namespace obc {
 
-void buzzer();
+void buzzer(std::size_t quantity);
 
 }  // namespace obc
 
