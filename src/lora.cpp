@@ -1,10 +1,19 @@
 #include "lora.hpp"
 
+#include "logger.hpp"
+#include "utils.hpp"
+
 namespace obc {
+
+namespace {
 
 HardwareSerial Serial5(PD2, PC12);
 
 constexpr auto baud_rate = 9600l;
+
+constexpr auto status = obc::Status::Debug;
+
+}  // namespace
 
 Result<Unit, Errc> init_lora()
 {
@@ -34,7 +43,8 @@ String lora_packet(const Packet &data)
         String(data.position.latitude, 4) += String(";") +=
         String(data.position.longitude, 4) += String(";") +=
         String(data.position.speed / mph_to_kph_conversion) += String(";") +=
-        String(data.bmp_measurements.temperature, 2);
+        String(data.bmp_measurements.temperature, 2) += String(";") +=
+        String(to_underlying<Status>(status));
 
     return to_send;
 }

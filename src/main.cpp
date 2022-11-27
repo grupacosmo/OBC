@@ -7,17 +7,21 @@
 #include "gps.hpp"
 #include "logger.hpp"
 #include "lora.hpp"
+#include "utils.hpp"
 
 constexpr auto baud_rate = 9600l;
 constexpr auto logs_interval = 2000;
 constexpr auto lora_interval = 60000;
 constexpr auto watchdog_interval = 10000000;
+constexpr std::size_t buzzer_ind_fix_not_fetched = 1;
 
 bool is_date_appended = false;
 
 HardwareSerial Serial3(PC11, PC10);
 MMA8452Q accelerometer;
 BMP280 bmp;
+
+// NOLINTNEXTLINE(cppcoreguidelines-interfaces-global-init)
 Adafruit_GPS gps(&Serial3);
 
 uint32_t timer = millis();
@@ -44,7 +48,7 @@ void loop()
             logs.bmp_measurements = bmp_measurements.unwrap();
         }
 
-        if (!is_date_appended) {
+        if (not is_date_appended) {
             obc::log_boot(obc::serialize(obc::read_date(gps)));
             is_date_appended = true;
         }
@@ -54,8 +58,9 @@ void loop()
         if (millis() - lora_timer > lora_interval) {
             obc::send_packet(obc::lora_packet(logs));
             lora_timer = millis();
-            if (not logs.position.fix) { obc::buzzer(1); }
         }
+
+        if (not logs.position.fix) { obc::buzzer(buzzer_ind_fix_not_fetched); }
 
         timer = millis();
         IWatchdog.reload();

@@ -1,6 +1,14 @@
 #include "error.hpp"
 
+#include "buzzer.hpp"
+
 namespace obc {
+
+namespace {
+
+constexpr std::size_t buzzer_ind_panic = 3;
+
+}  // namespace
 
 void panic(const char* msg, SourceLocation loc)
 {
@@ -14,7 +22,7 @@ void panic(const char* msg, SourceLocation loc)
     Serial.print(loc.line());
     Serial.print("\n");
     Serial.flush();
-    while (true) {}
+    while (true) { obc::buzzer(buzzer_ind_panic); }
 }
 
 }  // namespace obc

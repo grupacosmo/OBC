@@ -7,7 +7,7 @@ namespace obc {
 Result<Unit, Errc> init(MMA8452Q& accelerometer)
 {
     Wire.begin();
-    if (!accelerometer.begin()) { return Err{Errc::Busy}; }
+    if (not accelerometer.begin()) { return Err{Errc::Busy}; }
     return Ok{Unit{}};
 }
 

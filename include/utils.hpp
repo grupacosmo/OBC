@@ -5,6 +5,8 @@
 
 namespace obc {
 
+enum class Status { Debug, Flight };
+
 template <typename Enum>
 constexpr auto to_underlying(Enum e)
 {

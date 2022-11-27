@@ -12,7 +12,7 @@ constexpr auto baud_rate = 9600l;
 
 Result<Unit, Errc> init(Adafruit_GPS& gps)
 {
-    if (!gps.begin(baud_rate)) { return Err{Errc::Busy}; }
+    if (not gps.begin(baud_rate)) { return Err{Errc::Busy}; }
     gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
     gps.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
     gps.sendCommand(PGCMD_ANTENNA);
@@ -24,7 +24,7 @@ Result<Unit, Errc> measure(Adafruit_GPS& gps)
 {
     gps.read();
     if (gps.newNMEAreceived()) {
-        if (!gps.parse(gps.lastNMEA())) { return Err{Errc::Busy}; }
+        if (not gps.parse(gps.lastNMEA())) { return Err{Errc::Busy}; }
     }
     return Ok{Unit{}};
 }
@@ -56,19 +56,20 @@ GpsPosition read_position(Adafruit_GPS& gps)
 void print(GpsTime time)
 {
     Serial.print("Time: ");
-    if (!has_tens_digit(time.hour)) { Serial.print('0'); }
+    if (not has_tens_digit(time.hour)) { Serial.print('0'); }
     Serial.print(time.hour);
     Serial.print(':');
-    if (!has_tens_digit(time.minute)) { Serial.print('0'); }
+    if (not has_tens_digit(time.minute)) { Serial.print('0'); }
     Serial.print(time.minute);
     Serial.print(':');
-    if (!has_tens_digit(time.seconds)) { Serial.print('0'); }
+    if (not has_tens_digit(time.seconds)) { Serial.print('0'); }
     Serial.print(time.seconds);
     Serial.print('.');
-    if (!has_hundreds_digit(time.milliseconds)) {
-        if (!has_tens_digit(time.milliseconds)) { Serial.print("00"); }
+    if (not has_hundreds_digit(time.milliseconds)) {
+        // NOLINTNEXTLINE(bugprone-branch-clone)
+        if (not has_tens_digit(time.milliseconds)) { Serial.print("00"); }
         else {
-            Serial.print("0");
+            Serial.print('0');
         }
     }
     Serial.println(time.milliseconds);

@@ -2,15 +2,16 @@
 
 #include <Arduino.h>
 
+namespace obc {
+
+namespace {
+
 constexpr uint8_t sd_chip_select = D9;
+constexpr std::size_t buzzer_ind_fix_fetched = 2;
 
 String flight_path_folder;
 
 File file;
-
-namespace obc {
-
-namespace {
 
 void init_flight_path_folder()
 {
@@ -48,14 +49,14 @@ void file_appendln(const char* file_name, const char* data)
 
 Result<Unit, Errc> sd_init()
 {
-    if (!SD.begin(sd_chip_select)) { return Err{Errc::Busy}; }
+    if (not SD.begin(sd_chip_select)) { return Err{Errc::Busy}; }
 
     init_flight_path_folder();
-    if (!SD.mkdir(flight_path_folder)) { return Err{Errc::Busy}; }
+    if (not SD.mkdir(flight_path_folder)) { return Err{Errc::Busy}; }
 
     log_boot("Booting time: " + String(millis()) + "ms");
 
-    const auto logs_legend =
+    constexpr auto logs_legend =
         "Time\tSystem time\tFix\tQuality\tLatitude\tLongtitude\tSpeed (km/h)\t"
         "Altitude(gps)\tSatellites\tTemperature\tPressure\tAltitude(gps)\t"
         "Acceleration X\tAcceleration Y\tAcceleration Z";
@@ -88,17 +89,17 @@ void log_error_and_panic(const char* msg, SourceLocation loc)
 
 void serialize_into(String& buf, const GpsTime& data)
 {
-    if (!has_tens_digit(data.hour)) { buf += '0'; }
+    if (not has_tens_digit(data.hour)) { buf += '0'; }
     buf += data.hour;
     buf += ':';
-    if (!has_tens_digit(data.minute)) { buf += '0'; }
+    if (not has_tens_digit(data.minute)) { buf += '0'; }
     buf += data.minute;
     buf += ':';
-    if (!has_tens_digit(data.seconds)) { buf += '0'; }
+    if (not has_tens_digit(data.seconds)) { buf += '0'; }
     buf += data.seconds;
     buf += ':';
-    if (!has_hundreds_digit(data.milliseconds)) {
-        if (!has_tens_digit(data.milliseconds)) { buf += "00"; }
+    if (not has_hundreds_digit(data.milliseconds)) {
+        if (not has_tens_digit(data.milliseconds)) { buf += "00"; }
         else {
             buf += '0';
         }
@@ -128,7 +129,7 @@ void serialize_into(String& buf, const GpsPosition& data)
         buf += "\t";
         buf += static_cast<int>(data.satelites);
         buf += "\t";
-        obc::buzzer(2);
+        obc::buzzer(buzzer_ind_fix_fetched);
     }
     else {
         for (int i = 0; i < 5; ++i) { buf += "0\t"; }
@@ -142,7 +143,7 @@ void serialize_into(String& buf, const GpsDate& data)
     buf += '/';
     buf += data.month;
     buf += "/20";
-    if (!has_tens_digit(data.year)) { buf += '0'; }
+    if (not has_tens_digit(data.year)) { buf += '0'; }
     buf += data.year;
 }
 
