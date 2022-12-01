@@ -132,7 +132,7 @@ void serialize_into(String& buf, const GpsPosition& data)
         obc::buzzer(buzzer_ind_fix_fetched);
     }
     else {
-        for (int i = 0; i < 5; ++i) { buf += "0\t"; }
+        for (int i = 0; i < 4; ++i) { buf += "0\t"; }
     }
 }
 

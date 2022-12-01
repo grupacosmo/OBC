@@ -41,16 +41,19 @@ GpsTime read_time(Adafruit_GPS& gps)
 
 GpsPosition read_position(Adafruit_GPS& gps)
 {
-    return GpsPosition{
-        gps.fix,
-        gps.fixquality,
-        gps.longitudeDegrees,
-        gps.lon,
-        gps.latitudeDegrees,
-        gps.lat,
-        gps.altitude,
-        gps.speed,
-        gps.satellites};
+    if (gps.fix) {
+        return GpsPosition{
+            gps.fix,
+            gps.fixquality,
+            gps.longitudeDegrees,
+            gps.lon,
+            gps.latitudeDegrees,
+            gps.lat,
+            gps.altitude,
+            gps.speed,
+            gps.satellites};
+    }
+    return GpsPosition{false, 0, 0, 0, 0, 0, 0, 0, 0};
 }
 
 void print(GpsTime time)
@@ -82,7 +85,7 @@ void print(GpsDate date)
     Serial.print('/');
     Serial.print(date.month);
     Serial.print("/20");
-    if (!has_tens_digit(date.year)) { Serial.print("0"); }
+    if (not has_tens_digit(date.year)) { Serial.print("0"); }
     Serial.println(date.year);
 }
 
