@@ -32,8 +32,8 @@ jobs:
       - name: Check
         run: pio check --pattern="src/*.cpp" --pattern="include/*.hpp" --fail-on-defect=low --fail-on-defect=medium --fail-on-defect=high
       - name: Format
-        uses: DoozyX/clang-format-lint-action@v0.13
+        uses: DoozyX/clang-format-lint-action@v0.15
         with:
           source: './src ./include'
           extensions: 'hpp,h,cpp,c'
-          clangFormatVersion: 13
+          clangFormatVersion: 15

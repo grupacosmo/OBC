@@ -51,8 +51,7 @@
 
 namespace obc {
 
-struct Unit {
-};
+struct Unit {};
 
 namespace detail {
 
@@ -65,15 +64,13 @@ struct Singleton {
 }  // namespace detail
 
 template <typename T>
-struct Ok : detail::Singleton<T> {
-};
+struct Ok : detail::Singleton<T> {};
 
 template <typename T>
 Ok(T) -> Ok<T>;
 
 template <typename E>
-struct Err : detail::Singleton<E> {
-};
+struct Err : detail::Singleton<E> {};
 
 template <typename E>
 Err(E) -> Err<E>;
