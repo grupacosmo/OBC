@@ -1,6 +1,6 @@
 ## HABSat
 
-OBC is a repository with foftware for the on board computer of stratospheric probe HABSat based on Nucleo L476RG.
+OBC is a repository with software for the on board computer of stratospheric probe HABSat based on Nucleo L476RG.
 
 Prerequisities:
 - <a href=https://github.com/platformio>PlatformIO</a>
