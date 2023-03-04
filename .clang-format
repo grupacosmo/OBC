@@ -15,3 +15,5 @@ IndentRequires: true
 PenaltyReturnTypeOnItsOwnLine: 1000
 BreakBeforeBinaryOperators: NonAssignment
 AlignOperands: AlignAfterOperator
+Cpp11BracedListStyle: false
+AlignArrayOfStructures: None

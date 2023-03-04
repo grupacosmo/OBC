@@ -37,7 +37,7 @@ void setup()
 void loop()
 {
     if (obc::measure(gps).is_ok() and millis() - timer > logs_interval) {
-        obc::Packet logs = {{}, {}, {}, {}, {}};
+        obc::Packet logs = { {}, {}, {}, {}, {} };
         const auto acclr = obc::measure(accelerometer);
         const auto bmp_measurements = obc::measure(bmp);
         logs.time = obc::read_time(gps);

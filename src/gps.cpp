@@ -12,48 +12,43 @@ constexpr auto baud_rate = 9600l;
 
 Result<Unit, Errc> init(Adafruit_GPS& gps)
 {
-    if (not gps.begin(baud_rate)) { return Err{Errc::Busy}; }
+    if (not gps.begin(baud_rate)) { return Err{ Errc::Busy }; }
     gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
     gps.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
     gps.sendCommand(PGCMD_ANTENNA);
     Serial3.println(PMTK_Q_RELEASE);
-    return Ok{Unit{}};
+    return Ok{ Unit{} };
 }
 
 Result<Unit, Errc> measure(Adafruit_GPS& gps)
 {
     gps.read();
     if (gps.newNMEAreceived()) {
-        if (not gps.parse(gps.lastNMEA())) { return Err{Errc::Busy}; }
+        if (not gps.parse(gps.lastNMEA())) { return Err{ Errc::Busy }; }
     }
-    return Ok{Unit{}};
+    return Ok{ Unit{} };
 }
 
 GpsDate read_date(Adafruit_GPS& gps)
 {
-    return GpsDate{gps.year, gps.month, gps.day};
+    return GpsDate{ gps.year, gps.month, gps.day };
 }
 
 GpsTime read_time(Adafruit_GPS& gps)
 {
-    return GpsTime{gps.hour, gps.minute, gps.seconds, gps.milliseconds};
+    return GpsTime{ gps.hour, gps.minute, gps.seconds, gps.milliseconds };
 }
 
 GpsPosition read_position(Adafruit_GPS& gps)
 {
     if (gps.fix) {
         return GpsPosition{
-            gps.fix,
-            gps.fixquality,
-            gps.longitudeDegrees,
-            gps.lon,
-            gps.latitudeDegrees,
-            gps.lat,
-            gps.altitude,
-            gps.speed,
-            gps.satellites};
+            gps.fix,      gps.fixquality,      gps.longitudeDegrees,
+            gps.lon,      gps.latitudeDegrees, gps.lat,
+            gps.altitude, gps.speed,           gps.satellites
+        };
     }
-    return GpsPosition{false, 0, 0, 0, 0, 0, 0, 0, 0};
+    return GpsPosition{ false, 0, 0, 0, 0, 0, 0, 0, 0 };
 }
 
 void print(GpsTime time)

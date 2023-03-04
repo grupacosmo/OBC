@@ -19,21 +19,19 @@ Result<Unit, Errc> init_lora()
 {
     Serial5.begin(baud_rate);
     // NOLINTNEXTLINE(cppcoreguidelines-init-variables)
-    constexpr std::array commands = {
-        "AT+DR=EU868",
-        "AT+CH=NUM,0-2",
-        "AT+MODE=LWOTAA",
-        "AT+JOIN",
-        "AT+UART=TIMEOUT,2000",
-    };
+    constexpr std::array commands = { "AT+DR=EU868",
+                                      "AT+CH=NUM,0-2",
+                                      "AT+MODE=LWOTAA",
+                                      "AT+JOIN",
+                                      "AT+UART=TIMEOUT,2000" };
 
     for (const auto &command : commands) {
         Serial5.println(command);
         delay(10000);
         String payload = Serial5.readString();
-        if (payload.startsWith("ERR")) { return Err{Errc::Busy}; }
+        if (payload.startsWith("ERR")) { return Err{ Errc::Busy }; }
     }
-    return Ok{Unit{}};
+    return Ok{ Unit{} };
 }
 
 String lora_packet(const Packet &data)
