@@ -3,6 +3,8 @@
 
 #include <Adafruit_GPS.h>
 
+#include <array>
+
 #include "digits.hpp"
 #include "error.hpp"
 #include "result.hpp"
