@@ -42,11 +42,19 @@ GpsTime read_time(Adafruit_GPS& gps)
 GpsPosition read_position(Adafruit_GPS& gps)
 {
     if (gps.fix) {
+        // clang-format off
         return GpsPosition{
-            gps.fix,      gps.fixquality,      gps.longitudeDegrees,
-            gps.lon,      gps.latitudeDegrees, gps.lat,
-            gps.altitude, gps.speed,           gps.satellites
+            gps.fix,
+            gps.fixquality,
+            gps.longitudeDegrees,
+            gps.lon,
+            gps.latitudeDegrees,
+            gps.lat,
+            gps.altitude,
+            gps.speed,
+            gps.satellites,
         };
+        // clang-format on
     }
     return GpsPosition{ false, 0, 0, 0, 0, 0, 0, 0, 0 };
 }

@@ -17,3 +17,4 @@ BreakBeforeBinaryOperators: NonAssignment
 AlignOperands: AlignAfterOperator
 Cpp11BracedListStyle: false
 AlignArrayOfStructures: None
+ExperimentalAutoDetectBinPacking: false
