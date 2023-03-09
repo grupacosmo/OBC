@@ -92,10 +92,10 @@ struct ResultBase {
     bool is_ok_;
 
     // NOLINTNEXTLINE(hicpp-explicit-conversions)
-    ResultBase(Ok<T>&& ok) : ok{std::move(ok)}, is_ok_{true} {}
+    ResultBase(Ok<T>&& ok) : ok{ std::move(ok) }, is_ok_{ true } {}
 
     // NOLINTNEXTLINE(hicpp-explicit-conversions)
-    ResultBase(Err<E>&& err) : err{std::move(err)}, is_ok_{false} {}
+    ResultBase(Err<E>&& err) : err{ std::move(err) }, is_ok_{ false } {}
 
     ResultBase(const ResultBase&) = default;
     ResultBase& operator=(const ResultBase&) = default;
@@ -115,10 +115,10 @@ struct ResultBase<T, E, false> {
     bool is_ok_;
 
     // NOLINTNEXTLINE(hicpp-explicit-conversions)
-    ResultBase(Ok<T>&& ok) : ok{std::move(ok)}, is_ok_{true} {}
+    ResultBase(Ok<T>&& ok) : ok{ std::move(ok) }, is_ok_{ true } {}
 
     // NOLINTNEXTLINE(hicpp-explicit-conversions)
-    ResultBase(Err<E>&& err) : err{std::move(err)}, is_ok_{false} {}
+    ResultBase(Err<E>&& err) : err{ std::move(err) }, is_ok_{ false } {}
 
     ResultBase(const ResultBase&) = delete;
     ResultBase& operator=(const ResultBase&) = delete;

@@ -49,10 +49,10 @@ void file_appendln(const char* file_name, const char* data)
 
 Result<Unit, Errc> sd_init()
 {
-    if (not SD.begin(sd_chip_select)) { return Err{Errc::Busy}; }
+    if (not SD.begin(sd_chip_select)) { return Err{ Errc::Busy }; }
 
     init_flight_path_folder();
-    if (not SD.mkdir(flight_path_folder)) { return Err{Errc::Busy}; }
+    if (not SD.mkdir(flight_path_folder)) { return Err{ Errc::Busy }; }
 
     log_boot("Booting time: " + String(millis()) + "ms");
 
@@ -63,7 +63,7 @@ Result<Unit, Errc> sd_init()
 
     log_data(logs_legend);
 
-    return Ok{Unit{}};
+    return Ok{ Unit{} };
 }
 
 void log_boot(const char* msg)
