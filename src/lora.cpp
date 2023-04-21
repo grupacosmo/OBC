@@ -11,7 +11,7 @@ HardwareSerial Serial5(PD2, PC12);
 
 constexpr auto baud_rate = 9600l;
 
-constexpr auto status = obc::Status::Debug;
+constexpr auto status = obc::Status::Flight;
 
 }  // namespace
 
